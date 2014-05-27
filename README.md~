@@ -9,6 +9,7 @@ A musical instrument that anyone can play.
 - Eventually, 2+ machines will be able to sync together (in a master-slave relationship), & maintain concurrent keys, tempi, modes.
 
 Eliza's Tasks:
+- Generate an SSH key so she can push on the command line
 - Read the wikipedia article on temperament
 - Draft Gui design
 - Familiarize herself with the MIDI protocol (pretty optional)
