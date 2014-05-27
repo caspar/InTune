@@ -1,5 +1,5 @@
 // The display of the 2 waves
- 
+import java.util.Arrays; 
  
 void wave()
 {

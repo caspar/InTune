@@ -94,7 +94,6 @@ void draw() {
   background(0);
    
   wave(); //display the waves
-  logo(); //display the logo
  
   /// 3 knobs for the top synth
   g.setGain(myKnobA.value());  // volume knob
