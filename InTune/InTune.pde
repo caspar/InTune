@@ -7,11 +7,13 @@ import ddf.minim.ugens.*;
 
 MidiBus bus; 
 int sinFreq;
+int controllerNum;
 Minim minim;
 AudioOutput out;
 Oscil sinwave;
 Oscil triwave;
 Oscil sqrwave;
+MoogFilter  moog;
 
 //Notes: 
 //Any note can be found by running the operation (note*10^octave)
@@ -91,15 +93,58 @@ void setup() {
   sinwave.patch(out);
   triwave.patch(out);
   //sqrwave.patch(out);
+  
+  //Pasted:
+    moog    = new MoogFilter( 1200, 0.5 );
+  
+  // we will filter a white noise source,
+  // which will allow us to hear the result of filtering
+  Noise noize = new Noise( 0.5f );  
+
+  // send the noise through the filter
+  noize.patch( moog ).patch( out );
 }
 
 void draw() {
-  //sinwave.setFrequency(sinFreq + 80);
-  //triwave.setFrequency((sinFreq + 80)/2);
+  sinwave.setFrequency(sinFreq*3 + 80);
+  triwave.setFrequency((sinFreq + 80)/2);
   //sinwave.setFrequency(chromFreqs[sinFreq/6] + 1);
   //triwave.setFrequency((chromFreqs[sinFreq/6] + 1)/2);
-  sinwave.setFrequency(cM[sinFreq/18]*8);
+  //sinwave.setFrequency(cM[sinFreq/18]*8);
+  //triwave.setFrequency(cM[sinFreq/18]*4);
+  background(controllerNum*5, sinFreq*2, 100);
+
+ stroke( 255 );
+  // draw the waveforms
+  for( int i = 0; i < out.bufferSize() - 1; i++ )
+  {
+    // find the x position of each buffer value
+    float x1  =  map( i, 0, out.bufferSize(), 0, width );
+    float x2  =  map( i+1, 0, out.bufferSize(), 0, width );
+    // draw a line from one buffer position to the next for both channels
+    line( x1, 50 + out.left.get(i)*50, x2, 50 + out.left.get(i+1)*50);
+    line( x1, 150 + out.right.get(i)*50, x2, 150 + out.right.get(i+1)*50);
+  } 
+  
+  text( "Filter type: " + moog.type, 10, 225 );
+  text( "Filter cutoff: " + moog.frequency.getLastValue() + " Hz", 10, 245 );
+  text( "Filter resonance: " + moog.resonance.getLastValue(), 10, 265 ); 
+
 } 
+void keyPressed()
+{
+  if ( key == '1' ) moog.type = MoogFilter.Type.LP;
+  if ( key == '2' ) moog.type = MoogFilter.Type.HP;
+  if ( key == '3' ) moog.type = MoogFilter.Type.BP;
+}
+void mouseMoved()
+{
+  float freq = constrain( map( mouseX/10, 0, width, 200, 12000 ), 200, 12000 );
+  float rez  = constrain( map( mouseY/10, height, 0, 0, 1 ), 0, 1 );
+  
+  moog.frequency.setLastValue( freq );
+  moog.resonance.setLastValue( rez  );
+}
 
 //void colorPixels(int pitch, int ) {
 //  background(
@@ -128,14 +173,14 @@ void noteOff(int channel, int pitch, int velocity) {
 
 void controllerChange(int channel, int number, int value) {
   // Receive a controllerChange
-  println();
+  println(); 
   println("Controller Change:");
   println("--------");
   //println("Channel:"+channel);
   println("Number:"+number);
   println("Value:"+value);
-  background(number*5, value*2, 100);
   sinFreq = value;
+  controllerNum = number;
   if (number == 14){
      sinFreq = 0;
     background(0);
