@@ -95,40 +95,40 @@ void setup() {
   //sqrwave.patch(out);
   
   //Pasted:
-    moog    = new MoogFilter( 1200, 0.5 );
+  //moog    = new MoogFilter( 1200, 0.5 );
   
   // we will filter a white noise source,
   // which will allow us to hear the result of filtering
-  Noise noize = new Noise( 0.5f );  
+  //Noise noize = new Noise( 0.5f );  
 
   // send the noise through the filter
-  noize.patch( moog ).patch( out );
+  //noize.patch( moog ).patch( out );
 }
 
 void draw() {
-  sinwave.setFrequency(sinFreq*3 + 80);
+  sinwave.setFrequency(sinFreq*2 + 70);
   triwave.setFrequency((sinFreq + 80)/2);
   //sinwave.setFrequency(chromFreqs[sinFreq/6] + 1);
   //triwave.setFrequency((chromFreqs[sinFreq/6] + 1)/2);
   //sinwave.setFrequency(cM[sinFreq/18]*8);
   //triwave.setFrequency(cM[sinFreq/18]*4);
-  background(controllerNum*5, sinFreq*2, 100);
-
+  //background(controllerNum*5, sinFreq*2, 100);
+background(0);
  stroke( 255 );
   // draw the waveforms
-  for( int i = 0; i < out.bufferSize() - 1; i++ )
+  for( int i = 0; i < out.bufferSize() - 1; i+=10 )
   {
     // find the x position of each buffer value
     float x1  =  map( i, 0, out.bufferSize(), 0, width );
-    float x2  =  map( i+1, 0, out.bufferSize(), 0, width );
+    float x2  =  map( i+1, 0 , out.bufferSize(), 0, width );
     // draw a line from one buffer position to the next for both channels
-    line( x1, 50 + out.left.get(i)*50, x2, 50 + out.left.get(i+1)*50);
-    line( x1, 150 + out.right.get(i)*50, x2, 150 + out.right.get(i+1)*50);
+    //line( x1, 280 + out.left.get(i)*100, x2, 250 + out.left.get(i+1)*100);
+    line(x1, 450 + out.right.get(i)*100, x2,250 + out.right.get(i+1)*100);
   } 
   
-  text( "Filter type: " + moog.type, 10, 225 );
-  text( "Filter cutoff: " + moog.frequency.getLastValue() + " Hz", 10, 245 );
-  text( "Filter resonance: " + moog.resonance.getLastValue(), 10, 265 ); 
+  //text( "Filter type: " + moog.type, 10, 225 );
+  //text( "Filter cutoff: " + moog.frequency.getLastValue() + " Hz", 10, 245 );
+  //text( "Filter resonance: " + moog.resonance.getLastValue(), 10, 265 ); 
 
 } 
 void keyPressed()
@@ -142,8 +142,8 @@ void mouseMoved()
   float freq = constrain( map( mouseX/10, 0, width, 200, 12000 ), 200, 12000 );
   float rez  = constrain( map( mouseY/10, height, 0, 0, 1 ), 0, 1 );
   
-  moog.frequency.setLastValue( freq );
-  moog.resonance.setLastValue( rez  );
+  //moog.frequency.setLastValue( freq );
+  //moog.resonance.setLastValue( rez  );
 }
 
 //void colorPixels(int pitch, int ) {
