@@ -85,8 +85,8 @@ void setup() {
   minim = new Minim(this);
   out = minim.getLineOut();
   // create a sine wave Oscil, set to 440 Hz, at 0.5 amplitude
-  sinwave = new Oscil( 0, 0.8f, Waves.SINE );  
-  triwave = new Oscil( 0, 1f, Waves.TRIANGLE );
+  sinwave = new Oscil( 0, 1.8f, Waves.SINE );  
+  triwave = new Oscil( 0, 2f, Waves.TRIANGLE );
   sqrwave = new Oscil( 220, 0.01f, Waves.SQUARE );
 
   // patch the Oscil to the output
@@ -106,15 +106,16 @@ void setup() {
 }
 
 void draw() {
-  sinwave.setFrequency(sinFreq*2 + 70);
-  triwave.setFrequency((sinFreq + 80)/2);
-  //sinwave.setFrequency(chromFreqs[sinFreq/6] + 1);
-  //triwave.setFrequency((chromFreqs[sinFreq/6] + 1)/2);
+  //sinwave.setFrequency(sinFreq*2 + 70);
+  //triwave.setFrequency((sinFreq + 80)/2);
+  sinwave.setFrequency(chromFreqs[sinFreq/6] + 1);
+  triwave.setFrequency((chromFreqs[sinFreq/6] + 1)/2);
   //sinwave.setFrequency(cM[sinFreq/18]*8);
   //triwave.setFrequency(cM[sinFreq/18]*4);
   //background(controllerNum*5, sinFreq*2, 100);
-background(0);
- stroke( 255 );
+  background(0);
+ //stroke( 255 );
+ stroke(255 - controllerNum*5, 255 - sinFreq*2, 155);
   // draw the waveforms
   for( int i = 0; i < out.bufferSize() - 1; i+=10 )
   {
