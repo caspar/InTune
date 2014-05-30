@@ -13,7 +13,7 @@ AudioOutput out;
 Oscil sinwave;
 Oscil triwave;
 Oscil sqrwave;
-MoogFilter  moog;
+MoogFilter  moog; //a moog is the original commecially-marketed analog synthesizer! (this is residual, but we'll reimplement it eventually)
 
 //Notes: 
 //Any note can be found by running the operation (note*10^octave)
@@ -108,7 +108,11 @@ void setup() {
 }
 
 void draw() {
-  sinFreq = cc[14]
+  sinFreq = cc[14] //the problem with this is that it will evaluate the value every call. 
+                   //This is proabably cool with just a few knobs, but eventually it'll slow down our program.
+                   //It also defeats the purpose of using MIDI, which only sends signals when controllers' status are changed (hense "cc messages"),
+                   //or keys are pressed.
+
   //sinwave.setFrequency(sinFreq*2 + 70);
   //triwave.setFrequency((sinFreq + 80)/2);
   sinwave.setFrequency(chromFreqs[sinFreq/6] + 1);
@@ -118,7 +122,10 @@ void draw() {
   //background(controllerNum*5, sinFreq*2, 100);
   background(0);
  //stroke( 255 );
- //can we just not use controller number as a variable...? like why even are you what that makes no sense go away
+ //can we just not use controller number as a variable...? like why even are you what that makes no sense go away 
+ //that was done in the efforts to keep "drawing" in the draw() method, 
+ //but we proably won't need to do that when each knob controls a different param.
+ 
  stroke(255 - controllerNum*5, 255 - sinFreq*2, 155);
   // draw the waveforms
   for( int i = 0; i < out.bufferSize() - 1; i+=10 )
