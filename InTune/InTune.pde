@@ -18,31 +18,34 @@ MoogFilter  moog;
 //Notes: 
 //Any note can be found by running the operation (note*10^octave)
 //The octave of the notes shown is 0, middle-c is C4
-float C  = 16.35; //32.70, 65.41, 130.8, 261.6, and so on
-float Cs = 17.32;
-float Df = 17.32;
-float D  = 18.35;
-float Ds = 19.45;
-float Ef = 19.45;
-float E  = 20.60;
-float F  = 21.83;
-float Fs = 23.12;
-float Gf = 23.12;
-float G  = 24.50;
-float Gs = 25.96;
-float Af = 25.96;
-float A  = 27.50;
-float As = 29.14;
-float Bf = 29.14;
-float B  = 30.87;
+final float C  = 16.35; //32.70, 65.41, 130.8, 261.6, and so on
+final float Cs = 17.32; //wooo, CS!
+final float Df = 17.32;
+final float D  = 18.35;
+final float Ds = 19.45;
+final float Ef = 19.45;
+final float E  = 20.60;
+final float F  = 21.83;
+final float Fs = 23.12;
+final float Gf = 23.12;
+final float G  = 24.50;
+final float Gs = 25.96;
+final float Af = 25.96;
+final float A  = 27.50;
+final float As = 29.14;
+final float Bf = 29.14;
+final float B  = 30.87;
 
-float[] chromFreqs = {
+final float[] chromFreqs = {
   65.41, 69.30, 73.42, 77.78, 82.41, 
   87.31, 92.50, 98.00, 103.8, 110.0, 
   116.5, 123.5, 130.8, 138.6, 146.8, 
   155.6, 164.8, 174.6, 185.0, 196.0, 
   207.7, 220.0, 233.1, 246.9,
 };
+
+final float[] keys = {Ab, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs};
+    //GCDBEAD -- circle of 5ths
 
 float[] aM  = {};
 float[] am  = {};
@@ -103,6 +106,28 @@ void setup() {
 
   // send the noise through the filter
   //noize.patch( moog ).patch( out );
+}
+double[] getScale(int mode, int keyOf){
+  //returns scale
+  //modes are 1-7
+  //[I D P L M A L]
+  //[Ionian Dorian Phyrigian Lydian Mixolydian Aeolian Locrian]
+  final int[] Ionian = {2,2,1,2,2,2,1}; //these numbers represent how much we should increment by
+  int[] steps = new int[7];
+  double[] scale = new double[7];
+  //for (int i = mode ; i != mode - 1; i++){
+  int i = mode; 
+  while (steps[7] != null){//for each? while steps.hasNext()?
+      if (i == 6) i = 0;
+      steps[]
+      i++;
+  }
+  i = 0;
+  for (int j : steps){
+     i+=steps[j];
+     scale[i] = chromFreqs[i];
+  }
+  return scale;
 }
 
 void draw() {
@@ -186,5 +211,12 @@ void controllerChange(int channel, int number, int value) {
      sinFreq = 0;
     background(0);
   }
+}
+
+void stop()
+{
+  out.close();
+  minim.stop(); 
+  super.stop();
 }
 

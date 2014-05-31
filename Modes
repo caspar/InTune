@@ -1,8 +1,8 @@
 "I Don't Particularly Like Modes A Lot"
-CDEFGAB - Ionian      WWHWWWH 
-DEFGABC - Dorian      WHWWWHW
-EFGABCD - Phrygian    HWWWHWW 
-FGABCDE - Lydian      WWWHWWH
-GABCDEF - Mixolydian  WWHWWHW
-ABCDEFG - Aeolian     WHWWHWW
-BCDEFGA - Locrian     HWWHWWW
+CDEFGAB - Ionian      {2,2,1,2,2,2,1} WWHWWWH 
+DEFGABC - Dorian      {2,1,2,2,2,1,2} WHWWWHW
+EFGABCD - Phrygian    {1,2,2,2,1,2,2} HWWWHWW 
+FGABCDE - Lydian      {2,2,2,1,2,2,1} WWWHWWH
+GABCDEF - Mixolydian  {2,2,1,2,2,1,2} WWHWWHW
+ABCDEFG - Aeolian     {2,1,2,2,1,2,2} WHWWHWW
+BCDEFGA - Locrian     {1,2,2,1,2,2,2} HWWHWWW
