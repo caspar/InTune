@@ -14,6 +14,7 @@ Oscil sinwave;
 Oscil triwave;
 Oscil sqrwave;
 MoogFilter  moog;
+int[] knobs = new int[30];
 
 //Notes: 
 //Any note can be found by running the operation (note*10^octave)
@@ -44,41 +45,7 @@ final float[] chromFreqs = {
   207.7, 220.0, 233.1, 246.9,
 };
 
-final float[] keys = {Ab, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs};
-    //GCDBEAD -- circle of 5ths
-
-float[] aM  = {};
-float[] am  = {};
-float[] bfM = { Bf, C, D, Ef, F, G, A };
-float[] bfm = {};
-float[] bM  = {};
-float[] bm  = {};
-float[] cM  = { C, D, E, F, G, A, B, C*2.0 };
-float[] cm  = {};
-float[] csM = {};
-float[] csm = {};
-float[] dfM = {};
-float[] dfm = {};
-float[] dM  = {};
-float[] dm  = {};
-float[] dsM = {};
-float[] dsm = {};
-float[] efM = {};
-float[] efm = {};
-float[] eM  = {};
-float[] em  = {};
-float[] fM  = {};
-float[] fm  = {};
-float[] fsM = {};
-float[] fsm = {};
-float[] gfM = {};
-float[] gfm = {};
-float[] gM  = {};
-float[] gm  = {};
-float[] gsM = {};
-float[] gsm = {};
-float[] afM = {};
-float[] afm = {};
+final float[] keys = {Af, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs};
 
 void setup() {
   size(1280, 800);
@@ -118,8 +85,8 @@ double[] getScale(int mode, int keyOf){
   //for (int i = mode ; i != mode - 1; i++){
   int i = mode; 
   while (steps[7] != null){//for each? while steps.hasNext()?
-      if (i == 6) i = 0;
-      steps[]
+      if (i == 6) i = 0;  
+      steps[];
       i++;
   }
   i = 0;
@@ -151,66 +118,19 @@ void draw() {
     //line( x1, 280 + out.left.get(i)*100, x2, 250 + out.left.get(i+1)*100);
     line(x1, 450 + out.right.get(i)*100, x2,250 + out.right.get(i+1)*100);
   } 
-  
-  //text( "Filter type: " + moog.type, 10, 225 );
-  //text( "Filter cutoff: " + moog.frequency.getLastValue() + " Hz", 10, 245 );
-  //text( "Filter resonance: " + moog.resonance.getLastValue(), 10, 265 ); 
-
 } 
-void keyPressed()
-{
-  if ( key == '1' ) moog.type = MoogFilter.Type.LP;
-  if ( key == '2' ) moog.type = MoogFilter.Type.HP;
-  if ( key == '3' ) moog.type = MoogFilter.Type.BP;
-}
-void mouseMoved()
-{
-  float freq = constrain( map( mouseX/10, 0, width, 200, 12000 ), 200, 12000 );
-  float rez  = constrain( map( mouseY/10, height, 0, 0, 1 ), 0, 1 );
-  
-  //moog.frequency.setLastValue( freq );
-  //moog.resonance.setLastValue( rez  );
-}
-
-//void colorPixels(int pitch, int ) {
-//  background(
-//}
 
 void noteOn(int channel, int pitch, int velocity) {
-  // Receive a noteOn
-  println();
-  println("Note On:");
-  println("--------");
-  //println("Channel:"+channel);
-  println("Pitch:"+pitch);
-  println("Velocity:"+velocity);
-  //colorPixels(pitch, velocity)
+  println("Note On: " + pitch + " @ " + velocity);
 }
 
 void noteOff(int channel, int pitch, int velocity) {
-  // Receive a noteOff
-  println();
-  println("Note Off:");
-  println("--------");
-  //println("Channel:"+channel);
-  println("Pitch:"+pitch);
-  println("Velocity:"+velocity);
+  println("Note Off: " + pitch " @ " + velocity);
 }
 
 void controllerChange(int channel, int number, int value) {
-  // Receive a controllerChange
-  println(); 
-  println("Controller Change:");
-  println("--------");
-  //println("Channel:"+channel);
-  println("Number:"+number);
-  println("Value:"+value);
-  sinFreq = value;
-  controllerNum = number;
-  if (number == 14){
-     sinFreq = 0;
-    background(0);
-  }
+  println("C: " + number + " @ " + value);
+  knobs[number] = value;
 }
 
 void stop()
