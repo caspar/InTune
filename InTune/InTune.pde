@@ -14,6 +14,7 @@ Oscil sinwave;
 Oscil triwave;
 Oscil sqrwave;
 MoogFilter  moog;
+int[] knobs = new int[30];
 
 //Notes: 
 //Any note can be found by running the operation (note*10^octave)
@@ -44,6 +45,7 @@ final float[] chromFreqs = {
   207.7, 220.0, 233.1, 246.9,
 };
 
+<<<<<<< HEAD
 //what the hell is Ab
 final float[] keys = {Af, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs};
     //GCDBEAD -- circle of 5ths
@@ -80,6 +82,9 @@ float[] gsM = {};
 float[] gsm = {};
 float[] afM = {};
 float[] afm = {};
+=======
+final float[] keys = {Af, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs};
+>>>>>>> 23519f1193173e51f61e7d22027afacf4ab059be
 
 void setup() {
   size(1280, 800);
@@ -91,23 +96,12 @@ void setup() {
   // create a sine wave Oscil, set to 440 Hz, at 0.5 amplitude
   sinwave = new Oscil( 0, 1.8f, Waves.SINE );  
   triwave = new Oscil( 0, 2f, Waves.TRIANGLE );
-  sqrwave = new Oscil( 220, 0.01f, Waves.SQUARE );
-
+  
   // patch the Oscil to the output
   sinwave.patch(out);
   triwave.patch(out);
-  //sqrwave.patch(out);
-  
-  //Pasted:
-  //moog    = new MoogFilter( 1200, 0.5 );
-  
-  // we will filter a white noise source,
-  // which will allow us to hear the result of filtering
-  //Noise noize = new Noise( 0.5f );  
-
-  // send the noise through the filter
-  //noize.patch( moog ).patch( out );
 }
+
 double[] getScale(int mode, int keyOf){
   //returns scale
   //modes are 1-7
@@ -135,8 +129,8 @@ double[] getScale(int mode, int keyOf){
   /*
   int i = mode; 
   while (steps[7] != null){//for each? while steps.hasNext()?
-      if (i == 6) i = 0;
-      steps[]
+      if (i == 6) i = 0;  
+      steps[];
       i++;
   }
   i = 0;
@@ -151,30 +145,24 @@ double[] getScale(int mode, int keyOf){
 void draw() {
   //sinwave.setFrequency(sinFreq*2 + 70);
   //triwave.setFrequency((sinFreq + 80)/2);
-  sinwave.setFrequency(chromFreqs[sinFreq/6] + 1);
-  triwave.setFrequency((chromFreqs[sinFreq/6] + 1)/2);
+  sinwave.setFrequency(chromFreqs[knobs[1]/6] + 1);
+  triwave.setFrequency((chromFreqs[knobs[1]/6] + 1)/2);
   //sinwave.setFrequency(cM[sinFreq/18]*8);
   //triwave.setFrequency(cM[sinFreq/18]*4);
   //background(controllerNum*5, sinFreq*2, 100);
   background(0);
- //stroke( 255 );
- stroke(255 - controllerNum*5, 255 - sinFreq*2, 155);
+  stroke( 255 );
+  //stroke(255 - controllerNum*5, 255 - sinFreq*2, 155); //changes w freq
   // draw the waveforms
   for( int i = 0; i < out.bufferSize() - 1; i+=10 )
   {
     // find the x position of each buffer value
     float x1  =  map( i, 0, out.bufferSize(), 0, width );
     float x2  =  map( i+1, 0 , out.bufferSize(), 0, width );
-    // draw a line from one buffer position to the next for both channels
-    //line( x1, 280 + out.left.get(i)*100, x2, 250 + out.left.get(i+1)*100);
     line(x1, 450 + out.right.get(i)*100, x2,250 + out.right.get(i+1)*100);
   } 
-  
-  //text( "Filter type: " + moog.type, 10, 225 );
-  //text( "Filter cutoff: " + moog.frequency.getLastValue() + " Hz", 10, 245 );
-  //text( "Filter resonance: " + moog.resonance.getLastValue(), 10, 265 ); 
-
 } 
+<<<<<<< HEAD
 
 void keyPressed()
 {
@@ -195,42 +183,20 @@ void mouseMoved()
 //void colorPixels(int pitch, int ) {
 //  background(
 //}
+=======
+>>>>>>> 23519f1193173e51f61e7d22027afacf4ab059be
 
 void noteOn(int channel, int pitch, int velocity) {
-  // Receive a noteOn
-  println();
-  println("Note On:");
-  println("--------");
-  //println("Channel:"+channel);
-  println("Pitch:"+pitch);
-  println("Velocity:"+velocity);
-  //colorPixels(pitch, velocity)
+  println("Note On: " + pitch + " @ " + velocity);
 }
 
 void noteOff(int channel, int pitch, int velocity) {
-  // Receive a noteOff
-  println();
-  println("Note Off:");
-  println("--------");
-  //println("Channel:"+channel);
-  println("Pitch:"+pitch);
-  println("Velocity:"+velocity);
+  println("Note Off: " + pitch " @ " + velocity);
 }
 
 void controllerChange(int channel, int number, int value) {
-  // Receive a controllerChange
-  println(); 
-  println("Controller Change:");
-  println("--------");
-  //println("Channel:"+channel);
-  println("Number:"+number);
-  println("Value:"+value);
-  sinFreq = value;
-  controllerNum = number;
-  if (number == 14){
-     sinFreq = 0;
-    background(0);
-  }
+  println("C: " + number + " @ " + value);
+  knobs[number] = value;
 }
 
 void stop()
