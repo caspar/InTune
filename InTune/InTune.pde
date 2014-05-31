@@ -44,7 +44,8 @@ final float[] chromFreqs = {
   207.7, 220.0, 233.1, 246.9,
 };
 
-final float[] keys = {Ab, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs};
+//what the hell is Ab
+final float[] keys = {Af, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs};
     //GCDBEAD -- circle of 5ths
 
 float[] aM  = {};
@@ -116,6 +117,22 @@ double[] getScale(int mode, int keyOf){
   int[] steps = new int[7];
   double[] scale = new double[7];
   //for (int i = mode ; i != mode - 1; i++){
+  int ii;
+    for (int i = 0; i < 7; i++){
+    ii = (i + mode) % 7; 
+    steps[i] = Ionian[ii];
+  }
+  //update: this is literally exactly what you did sorry caspie
+  int count = 0;
+  for (int s : steps){
+    //wait actually does the number show how much you increment by after? or before?
+    //assuming before because that's how it's done down there??
+    count += steps[s];
+    scale[s] = chromFreqs[s];
+  }
+  return scale;
+  
+  /*
   int i = mode; 
   while (steps[7] != null){//for each? while steps.hasNext()?
       if (i == 6) i = 0;
@@ -128,6 +145,7 @@ double[] getScale(int mode, int keyOf){
      scale[i] = chromFreqs[i];
   }
   return scale;
+  */
 }
 
 void draw() {
@@ -157,12 +175,14 @@ void draw() {
   //text( "Filter resonance: " + moog.resonance.getLastValue(), 10, 265 ); 
 
 } 
+
 void keyPressed()
 {
   if ( key == '1' ) moog.type = MoogFilter.Type.LP;
   if ( key == '2' ) moog.type = MoogFilter.Type.HP;
   if ( key == '3' ) moog.type = MoogFilter.Type.BP;
 }
+
 void mouseMoved()
 {
   float freq = constrain( map( mouseX/10, 0, width, 200, 12000 ), 200, 12000 );
