@@ -46,7 +46,7 @@ final float[] chromFreqs = {
 };
 
 //what the hell is Ab
-final float[] keys = {Af, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs};
+//final float[] keys = {Af, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs};
     //GCDBEAD -- circle of 5ths
 
 float[] aM  = {};
@@ -123,7 +123,6 @@ double[] getScale(int mode, int keyOf){
     scale[s] = chromFreqs[s];
   }
   return scale;
-  
   /*
   int i = mode; 
   while (steps[7] != null){//for each? while steps.hasNext()?
@@ -187,7 +186,7 @@ void noteOn(int channel, int pitch, int velocity) {
 }
 
 void noteOff(int channel, int pitch, int velocity) {
-  println("Note Off: " + pitch " at " + velocity);
+  println("Note Off: " + pitch + " at " + velocity);
 }
 
 void controllerChange(int channel, int number, int value) {
