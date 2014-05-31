@@ -45,43 +45,6 @@ final float[] chromFreqs = {
   207.7, 220.0, 233.1, 246.9,
 };
 
-//what the hell is Ab
-//final float[] keys = {Af, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs};
-    //GCDBEAD -- circle of 5ths
-
-float[] aM  = {};
-float[] am  = {};
-float[] bfM = { Bf, C, D, Ef, F, G, A };
-float[] bfm = {};
-float[] bM  = {};
-float[] bm  = {};
-float[] cM  = { C, D, E, F, G, A, B, C*2.0 };
-float[] cm  = {};
-float[] csM = {};
-float[] csm = {};
-float[] dfM = {};
-float[] dfm = {};
-float[] dM  = {};
-float[] dm  = {};
-float[] dsM = {};
-float[] dsm = {};
-float[] efM = {};
-float[] efm = {};
-float[] eM  = {};
-float[] em  = {};
-float[] fM  = {};
-float[] fm  = {};
-float[] fsM = {};
-float[] fsm = {};
-float[] gfM = {};
-float[] gfm = {};
-float[] gM  = {};
-float[] gm  = {};
-float[] gsM = {};
-float[] gsm = {};
-float[] afM = {};
-float[] afm = {};
-
 final float[] keys = {Af, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs};
 
 void setup() {
@@ -159,27 +122,6 @@ void draw() {
     line(x1, 450 + out.right.get(i)*100, x2,250 + out.right.get(i+1)*100);
   } 
 } 
-
-void keyPressed()
-{
-  if ( key == '1' ) moog.type = MoogFilter.Type.LP;
-  if ( key == '2' ) moog.type = MoogFilter.Type.HP;
-  if ( key == '3' ) moog.type = MoogFilter.Type.BP;
-}
-
-void mouseMoved()
-{
-  float freq = constrain( map( mouseX/10, 0, width, 200, 12000 ), 200, 12000 );
-  float rez  = constrain( map( mouseY/10, height, 0, 0, 1 ), 0, 1 );
-  
-  //moog.frequency.setLastValue( freq );
-  //moog.resonance.setLastValue( rez  );
-}
-
-//void colorPixels(int pitch, int ) {
-//  background(
-//}
-
 
 void noteOn(int channel, int pitch, int velocity) {
   println("Note On: " + pitch + " at " + velocity);
