@@ -45,7 +45,6 @@ final float[] chromFreqs = {
   207.7, 220.0, 233.1, 246.9,
 };
 
-<<<<<<< HEAD
 //what the hell is Ab
 final float[] keys = {Af, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs};
     //GCDBEAD -- circle of 5ths
@@ -82,9 +81,8 @@ float[] gsM = {};
 float[] gsm = {};
 float[] afM = {};
 float[] afm = {};
-=======
+
 final float[] keys = {Af, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs};
->>>>>>> 23519f1193173e51f61e7d22027afacf4ab059be
 
 void setup() {
   size(1280, 800);
@@ -162,7 +160,6 @@ void draw() {
     line(x1, 450 + out.right.get(i)*100, x2,250 + out.right.get(i+1)*100);
   } 
 } 
-<<<<<<< HEAD
 
 void keyPressed()
 {
@@ -183,19 +180,18 @@ void mouseMoved()
 //void colorPixels(int pitch, int ) {
 //  background(
 //}
-=======
->>>>>>> 23519f1193173e51f61e7d22027afacf4ab059be
+
 
 void noteOn(int channel, int pitch, int velocity) {
-  println("Note On: " + pitch + " @ " + velocity);
+  println("Note On: " + pitch + " at " + velocity);
 }
 
 void noteOff(int channel, int pitch, int velocity) {
-  println("Note Off: " + pitch " @ " + velocity);
+  println("Note Off: " + pitch " at " + velocity);
 }
 
 void controllerChange(int channel, int number, int value) {
-  println("C: " + number + " @ " + value);
+  println("C: " + number + " at " + value);
   knobs[number] = value;
 }
 
