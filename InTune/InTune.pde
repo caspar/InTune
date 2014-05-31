@@ -57,23 +57,12 @@ void setup() {
   // create a sine wave Oscil, set to 440 Hz, at 0.5 amplitude
   sinwave = new Oscil( 0, 1.8f, Waves.SINE );  
   triwave = new Oscil( 0, 2f, Waves.TRIANGLE );
-  sqrwave = new Oscil( 220, 0.01f, Waves.SQUARE );
-
+  
   // patch the Oscil to the output
   sinwave.patch(out);
   triwave.patch(out);
-  //sqrwave.patch(out);
-  
-  //Pasted:
-  //moog    = new MoogFilter( 1200, 0.5 );
-  
-  // we will filter a white noise source,
-  // which will allow us to hear the result of filtering
-  //Noise noize = new Noise( 0.5f );  
-
-  // send the noise through the filter
-  //noize.patch( moog ).patch( out );
 }
+
 double[] getScale(int mode, int keyOf){
   //returns scale
   //modes are 1-7
@@ -100,22 +89,20 @@ double[] getScale(int mode, int keyOf){
 void draw() {
   //sinwave.setFrequency(sinFreq*2 + 70);
   //triwave.setFrequency((sinFreq + 80)/2);
-  sinwave.setFrequency(chromFreqs[sinFreq/6] + 1);
-  triwave.setFrequency((chromFreqs[sinFreq/6] + 1)/2);
+  sinwave.setFrequency(chromFreqs[knobs[1]/6] + 1);
+  triwave.setFrequency((chromFreqs[knobs[1]/6] + 1)/2);
   //sinwave.setFrequency(cM[sinFreq/18]*8);
   //triwave.setFrequency(cM[sinFreq/18]*4);
   //background(controllerNum*5, sinFreq*2, 100);
   background(0);
- //stroke( 255 );
- stroke(255 - controllerNum*5, 255 - sinFreq*2, 155);
+  stroke( 255 );
+  //stroke(255 - controllerNum*5, 255 - sinFreq*2, 155); //changes w freq
   // draw the waveforms
   for( int i = 0; i < out.bufferSize() - 1; i+=10 )
   {
     // find the x position of each buffer value
     float x1  =  map( i, 0, out.bufferSize(), 0, width );
     float x2  =  map( i+1, 0 , out.bufferSize(), 0, width );
-    // draw a line from one buffer position to the next for both channels
-    //line( x1, 280 + out.left.get(i)*100, x2, 250 + out.left.get(i+1)*100);
     line(x1, 450 + out.right.get(i)*100, x2,250 + out.right.get(i+1)*100);
   } 
 } 
