@@ -100,13 +100,9 @@ void getScale(int mode, int keyOf){
   //update: this is literally exactly what you did sorry caspie
   int count = 0;
   for (int s : steps){
-    //wait actually does the number show how much you increment by after? or before?
-    //assuming before because that's how it was done before??
     count += steps[s];
     scale[s] = chromFreqs[s];
   }
-  return scale;
-}
 
 void draw() {
   sinwave.setFrequency((float)knobs[16]*2 + 70);
