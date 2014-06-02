@@ -85,7 +85,7 @@ void setup() {
 
 void getScale(int mode, int keyOf){
   //returns scale
-  //modes are 1-7
+  //modes are 0-6
   //[I D P L M A L]
   //[Ionian Dorian Phyrigian Lydian Mixolydian Aeolian Locrian]
   final int[] Ionian = {2,2,1,2,2,2,1}; //these numbers represent how much we should increment by
