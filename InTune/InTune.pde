@@ -103,6 +103,7 @@ void getScale(int mode, int keyOf){
     count += steps[s];
     scale[s] = chromFreqs[s];
   }
+  }
 
 void draw() {
   sinwave.setFrequency((float)knobs[16]*2 + 70);
