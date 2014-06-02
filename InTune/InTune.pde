@@ -1,5 +1,5 @@
 //Caspar Lant and Eliza Hripcsak
-//InTune
+//InTune 
 
 import themidibus.*;
 import ddf.minim.*;
