@@ -14,7 +14,7 @@ Oscil sinwave;
 Oscil triwave;
 Oscil sqrwave;
 MoogFilter  moog;
-int[] knobs = new int[100]; //change length later
+int[] knobs = new int[120]; //change length later
 
 //Notes: 
 //Any note can be found by running the operation (note*10^octave)
@@ -57,18 +57,45 @@ void setup() {
   // create a sine wave Oscil, set to 440 Hz, at 0.5 amplitude
   sinwave = new Oscil( 0, 1.8f, Waves.SINE );  
   triwave = new Oscil( 0, 2f, Waves.TRIANGLE );
+  moog    = new MoogFilter( 1200, 0.5 );
+  sinwave.patch( moog ).patch( out );
+
   
   // patch the Oscil to the output
-  sinwave.patch(out);
+  //sinwave.patch(out);
   triwave.patch(out);
+}
+
+/*void mouseMoved()
+{
+  float freq = constrain( map( mouseX, 0, width, 200, 12000 ), 200, 12000 );
+  float rez  = constrain( map( mouseY, height, 0, 0, 1 ), 0, 1 );
+  
+  moog.frequency.setLastValue( freq );
+  moog.resonance.setLastValue( rez  );
+}*/
+
+void keyPressed()
+{
+  if ( key == '1' ) moog.type = MoogFilter.Type.LP;
+  if ( key == '2' ) moog.type = MoogFilter.Type.HP;
+  if ( key == '3' ) moog.type = MoogFilter.Type.BP;
 }
 
 
 void draw() {
-  //sinwave.setFrequency(sinFreq*2 + 70);
-  //triwave.setFrequency((sinFreq + 80)/2);
-  sinwave.setFrequency(chromFreqs[knobs[16]/6] + 1);
-  triwave.setFrequency((chromFreqs[knobs[17]/6] + 1)/2);
+  sinwave.setFrequency((float)knobs[16]*2 + 70);
+  triwave.setFrequency((float)(knobs[17] + 80)/2);
+  //sinwave.setFrequency(chromFreqs[knobs[16]/6] + 1);
+  //triwave.setFrequency((chromFreqs[knobs[17]/6] + 1)/2);
+  sinwave.setAmplitude((float)knobs[24]/63 + 0.01);
+  triwave.setAmplitude((float)knobs[25]/63 + 0.01);
+  
+  moog.frequency.setLastValue((float)knobs[18]*10 );
+ moog.resonance.setLastValue((float)knobs[26]/40  );
+
+
+
   //sinwave.setFrequency(cM[sinFreq/18]*8);
   //triwave.setFrequency(cM[sinFreq/18]*4);
   //background(controllerNum*5, sinFreq*2, 100);
@@ -82,7 +109,10 @@ void draw() {
     float x1  =  map( i, 0, out.bufferSize(), 0, width );
     float x2  =  map( i+1, 0 , out.bufferSize(), 0, width );
     line(x1, 450 + out.right.get(i)*100, x2,250 + out.right.get(i+1)*100);
-  } 
+  }  
+  text( "Filter type: " + moog.type, 10, 225 );
+  text( "Filter cutoff: " + moog.frequency.getLastValue() + " Hz", 10, 245 );
+  text( "Filter resonance: " + moog.resonance.getLastValue(), 10, 265 ); 
 } 
 
 void noteOn(int channel, int pitch, int velocity) {
@@ -94,7 +124,7 @@ void noteOff(int channel, int pitch, int velocity) {
 }
 
 void controllerChange(int channel, int number, int value) {
-  println("C: " + number + " @ " + value);
+  println("CC: " + number + " @ " + value);
   knobs[number] = value;
 }
 
