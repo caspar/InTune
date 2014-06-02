@@ -86,7 +86,7 @@ void keyPressed(){
 
 void getScale(int mode, int keyOf){
   //returns scale
-  //modes are 1-7
+  //modes are 0-6
   //[I D P L M A L]
   //[Ionian Dorian Phyrigian Lydian Mixolydian Aeolian Locrian]
   final int[] Ionian = {2,2,1,2,2,2,1}; //these numbers represent how much we should increment by
@@ -101,8 +101,6 @@ void getScale(int mode, int keyOf){
   //update: this is literally exactly what you did sorry caspie
   int count = 0;
   for (int s : steps){
-    //wait actually does the number show how much you increment by after? or before?
-    //assuming before because that's how it was done before??
     count += steps[s];
     scale[s] = chromFreqs[s];
   }
