@@ -14,7 +14,7 @@ Oscil sinwave;
 Oscil triwave;
 Oscil sqrwave;
 MoogFilter  moog;
-int[] knobs = new int[30];
+int[] knobs = new int[100]; //change length later
 
 //Notes: 
 //Any note can be found by running the operation (note*10^octave)
@@ -63,50 +63,12 @@ void setup() {
   triwave.patch(out);
 }
 
-double[] getScale(int mode, int keyOf){
-  //returns scale
-  //modes are 1-7
-  //[I D P L M A L]
-  //[Ionian Dorian Phyrigian Lydian Mixolydian Aeolian Locrian]
-  final int[] Ionian = {2,2,1,2,2,2,1}; //these numbers represent how much we should increment by
-  int[] steps = new int[7];
-  double[] scale = new double[7];
-  //for (int i = mode ; i != mode - 1; i++){
-  int ii;
-    for (int i = 0; i < 7; i++){
-    ii = (i + mode) % 7; 
-    steps[i] = Ionian[ii];
-  }
-  //update: this is literally exactly what you did sorry caspie
-  int count = 0;
-  for (int s : steps){
-    //wait actually does the number show how much you increment by after? or before?
-    //assuming before because that's how it's done down there??
-    count += steps[s];
-    scale[s] = chromFreqs[s];
-  }
-  return scale;
-  /*
-  int i = mode; 
-  while (steps[7] != null){//for each? while steps.hasNext()?
-      if (i == 6) i = 0;  
-      steps[];
-      i++;
-  }
-  i = 0;
-  for (int j : steps){
-     i+=steps[j];
-     scale[i] = chromFreqs[i];
-  }
-  return scale;
-  */
-}
 
 void draw() {
   //sinwave.setFrequency(sinFreq*2 + 70);
   //triwave.setFrequency((sinFreq + 80)/2);
-  sinwave.setFrequency(chromFreqs[knobs[1]/6] + 1);
-  triwave.setFrequency((chromFreqs[knobs[1]/6] + 1)/2);
+  sinwave.setFrequency(chromFreqs[knobs[16]/6] + 1);
+  triwave.setFrequency((chromFreqs[knobs[17]/6] + 1)/2);
   //sinwave.setFrequency(cM[sinFreq/18]*8);
   //triwave.setFrequency(cM[sinFreq/18]*4);
   //background(controllerNum*5, sinFreq*2, 100);
@@ -124,15 +86,15 @@ void draw() {
 } 
 
 void noteOn(int channel, int pitch, int velocity) {
-  println("Note On: " + pitch + " at " + velocity);
+  println("Note On: " + pitch + " @ " + velocity);
 }
 
 void noteOff(int channel, int pitch, int velocity) {
-  println("Note Off: " + pitch + " at " + velocity);
+  println("Note Off: " + pitch + " @ " + velocity);
 }
 
 void controllerChange(int channel, int number, int value) {
-  println("C: " + number + " at " + value);
+  println("C: " + number + " @ " + value);
   knobs[number] = value;
 }
 
