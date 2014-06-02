@@ -17,6 +17,7 @@ MoogFilter  moog;
 
 int[] knobs = new int[100]; //change length later
 double[] scale;
+int[] colors = {#FF0000, #00FF00, #0000FF};
 
 //Notes: 
 //Any note can be found by running the operation (note*10^octave)
@@ -77,7 +78,7 @@ void setup() {
   moog.resonance.setLastValue( rez  );
 }*/
 
-{
+void keyPressed(){
   if ( key == '1' ) moog.type = MoogFilter.Type.LP;
   if ( key == '2' ) moog.type = MoogFilter.Type.HP;
   if ( key == '3' ) moog.type = MoogFilter.Type.BP;
@@ -105,19 +106,18 @@ void getScale(int mode, int keyOf){
     count += steps[s];
     scale[s] = chromFreqs[s];
   }
-  return scale;
 }
 
 void draw() {
-  sinwave.setFrequency((float)knobs[16]*2 + 70);
-  triwave.setFrequency((float)(knobs[17] + 80)/2);
-  //sinwave.setFrequency(chromFreqs[knobs[16]/6] + 1);
-  //triwave.setFrequency((chromFreqs[knobs[17]/6] + 1)/2);
+  //sinwave.setFrequency((float)knobs[16]*2 + 70);
+  //triwave.setFrequency((float)(knobs[17] + 80)/2);
+  sinwave.setFrequency(chromFreqs[knobs[16]/6] + 1);
+  triwave.setFrequency((chromFreqs[knobs[17]/6] + 1)/2);
   sinwave.setAmplitude((float)knobs[24]/63 + 0.01);
   triwave.setAmplitude((float)knobs[25]/63 + 0.01);
   
-  moog.frequency.setLastValue((float)knobs[18]*10 );
- moog.resonance.setLastValue((float)knobs[26]/40  );
+  moog.frequency.setLastValue((float)knobs[18]*20 );
+  moog.resonance.setLastValue((float)knobs[26]/127  );
 
 
 
@@ -125,7 +125,7 @@ void draw() {
   //triwave.setFrequency(cM[sinFreq/18]*4);
   //background(controllerNum*5, sinFreq*2, 100);
   background(0);
-  stroke( 255 );
+  stroke(colors[(int)random(3)]);
   //stroke(255 - controllerNum*5, 255 - sinFreq*2, 155); //changes w freq
   // draw the waveforms
   for( int i = 0; i < out.bufferSize() - 1; i+=10 )
