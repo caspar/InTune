@@ -13,7 +13,11 @@ AudioOutput out;
 Oscil sinwave;
 Oscil triwave;
 Oscil sqrwave;
-MoogFilter  moog;
+MoogFilter moog;
+Midi2Hz midi;
+ADSR  adsr;
+
+
 
 int[] knobs = new int[100]; //change length later
 double[] scale;
@@ -61,27 +65,37 @@ void setup() {
   sinwave = new Oscil( 0, 1.8f, Waves.SINE );  
   triwave = new Oscil( 0, 2f, Waves.TRIANGLE );
   moog    = new MoogFilter( 1200, 0.5 );
-  sinwave.patch( moog ).patch( out );
+  midi    = new Midi2Hz( 50 );
+  //ADSR(float maxAmp, float attTime, float decTime, float susLvl, float relTime) 
+  adsr    = new ADSR( 0.1, 0.3, 0.2, 0.00, 0.01 );
 
-  
+  midi.patch(sinwave.frequency);
+  midi.patch(triwave.frequency);
+  //sinwave.patch(moog).patch( out );
   // patch the Oscil to the output
-  //sinwave.patch(out);
-  triwave.patch(out);
+  triwave.patch(adsr);
+  sinwave.patch(adsr);
+
 }
 
-/*void mouseMoved()
+void keyPressed()
 {
-  float freq = constrain( map( mouseX, 0, width, 200, 12000 ), 200, 12000 );
-  float rez  = constrain( map( mouseY, height, 0, 0, 1 ), 0, 1 );
-  
-  moog.frequency.setLastValue( freq );
-  moog.resonance.setLastValue( rez  );
-}*/
-
-void keyPressed(){
+  if ( key == 'a' ) midi.setMidiNoteIn( 50 );
+  if ( key == 's' ) midi.setMidiNoteIn( 52 );
+  if ( key == 'd' ) midi.setMidiNoteIn( 54 );
+  if ( key == 'f' ) midi.setMidiNoteIn( 55 );
+  if ( key == 'g' ) midi.setMidiNoteIn( 57 );
+  if ( key == 'h' ) midi.setMidiNoteIn( 59 );
+  if ( key == 'j' ) midi.setMidiNoteIn( 61 );
+  if ( key == 'k' ) midi.setMidiNoteIn( 62 );
+  if ( key == 'l' ) midi.setMidiNoteIn( 64 );
+  if ( key == ';' ) midi.setMidiNoteIn( 66 );
+  if ( key == '\'') midi.setMidiNoteIn( 67 );
   if ( key == '1' ) moog.type = MoogFilter.Type.LP;
   if ( key == '2' ) moog.type = MoogFilter.Type.HP;
   if ( key == '3' ) moog.type = MoogFilter.Type.BP;
+    adsr.noteOn();
+    adsr.patch( out );
 }
 
 void getScale(int mode, int keyOf){
@@ -117,15 +131,11 @@ void draw() {
   moog.frequency.setLastValue((float)knobs[18]*20 );
   moog.resonance.setLastValue((float)knobs[26]/127  );
 
-
-
   //sinwave.setFrequency(cM[sinFreq/18]*8);
   //triwave.setFrequency(cM[sinFreq/18]*4);
-  //background(controllerNum*5, sinFreq*2, 100);
   background(0);
-  stroke(colors[(int)random(3)]);
-  //stroke(255 - controllerNum*5, 255 - sinFreq*2, 155); //changes w freq
-  // draw the waveforms
+  //stroke(colors[(int)random(3)]);
+  stroke(255);
   for( int i = 0; i < out.bufferSize() - 1; i+=10 )
   {
     // find the x position of each buffer value
