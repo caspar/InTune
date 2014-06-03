@@ -1,6 +1,6 @@
 //Caspar Lant and Eliza Hripcsak
 //InTune 
-
+import controlP5.*;
 import themidibus.*;
 import ddf.minim.*;
 import ddf.minim.ugens.*;
@@ -20,8 +20,17 @@ ADSR  adsr;
 
 
 int[] knobs = new int[100]; //change length later
+Knob a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p;
+
+Knob[] guiknobs = {
+  a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p
+};
+
+ControlP5 cp5;
 double[] scale;
-int[] colors = {#FF0000, #00FF00, #0000FF};
+int[] colors = {
+  #FF0000, #00FF00, #0000FF
+};
 
 //Notes: 
 //Any note can be found by running the operation (note*10^octave)
@@ -52,15 +61,18 @@ final float[] chromFreqs = {
   207.7, 220.0, 233.1, 246.9,
 };
 
-final float[] keys = {Af, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs};
+final float[] keys = {
+  Af, A, As, Bf, B, C, Cs, Df, D, F, Fs, Gf, G, Gs
+};
 
 void setup() {
-  size(1280, 800);
+  size(1280, 758);
   background(0);
   MidiBus.list(); // List all available Midi devices on STDOUT. This will show each device's index and name.
   bus = new MidiBus(this, 0, 1); // Create a new MidiBus using the device index to select the Midi input and output devices respectively.
   minim = new Minim(this);
   out = minim.getLineOut();
+  cp5 = new ControlP5(this);
   // create a sine wave Oscil, set to 440 Hz, at 0.5 amplitude
   sinwave = new Oscil( 0, 1.8f, Waves.SINE );  
   triwave = new Oscil( 0, 2f, Waves.TRIANGLE );
@@ -68,14 +80,24 @@ void setup() {
   midi    = new Midi2Hz( 50 );
   //ADSR(float maxAmp, float attTime, float decTime, float susLvl, float relTime) 
   adsr    = new ADSR( 0.1, 0.3, 0.2, 0.00, 0.01 );
-
   midi.patch(sinwave.frequency);
   midi.patch(triwave.frequency);
   //sinwave.patch(moog).patch( out );
   // patch the Oscil to the output
   triwave.patch(adsr);
   sinwave.patch(adsr);
-
+  for (int i = 0; i < guiknobs.length; i++) {
+    guiknobs[i] = cp5.addKnob(""+i)
+      .setRange(0, 127)
+        .setPosition(80*i+10, height-90)
+          .setRadius(30)
+            .setDragDirection(Knob.VERTICAL)
+              .setDecimalPrecision(0)
+                .shuffle()
+                  .setShowAngleRange(false)
+                    ;
+    guiknobs[i].setLabel(""+"knob "+guiknobs[i].getName());
+  }
 }
 
 void keyPressed()
@@ -94,27 +116,29 @@ void keyPressed()
   if ( key == '1' ) moog.type = MoogFilter.Type.LP;
   if ( key == '2' ) moog.type = MoogFilter.Type.HP;
   if ( key == '3' ) moog.type = MoogFilter.Type.BP;
-    adsr.noteOn();
-    adsr.patch( out );
+  adsr.noteOn();
+  adsr.patch( out );
 }
 
-void getScale(int mode, int keyOf){
+void getScale(int mode, int keyOf) {
   //returns scale
   //modes are 0-6
   //[I D P L M A L]
   //[Ionian Dorian Phyrigian Lydian Mixolydian Aeolian Locrian]
-  final int[] Ionian = {2,2,1,2,2,2,1}; //these numbers represent how much we should increment by
+  final int[] Ionian = {
+    2, 2, 1, 2, 2, 2, 1
+  }; //these numbers represent how much we should increment by
   int[] steps = new int[7];
   scale = new double[7];
   //for (int i = mode ; i != mode - 1; i++){
   int ii;
-    for (int i = 0; i < 7; i++){
+  for (int i = 0; i < 7; i++) {
     ii = (i + mode) % 7; 
     steps[i] = Ionian[ii];
   }
   //update: this is literally exactly what you did sorry caspie
   int count = 0;
-  for (int s : steps){
+  for (int s : steps) {
     count += steps[s];
     scale[s] = chromFreqs[s];
   }
@@ -127,7 +151,7 @@ void draw() {
   triwave.setFrequency((chromFreqs[knobs[17]/6] + 1)/2);
   sinwave.setAmplitude((float)knobs[24]/63 + 0.01);
   triwave.setAmplitude((float)knobs[25]/63 + 0.01);
-  
+
   moog.frequency.setLastValue((float)knobs[18]*20 );
   moog.resonance.setLastValue((float)knobs[26]/127  );
 
@@ -136,16 +160,16 @@ void draw() {
   background(0);
   //stroke(colors[(int)random(3)]);
   stroke(255);
-  for( int i = 0; i < out.bufferSize() - 1; i+=10 )
+  for ( int i = 0; i < out.bufferSize() - 1; i+=10 )
   {
     // find the x position of each buffer value
     float x1  =  map( i, 0, out.bufferSize(), 0, width );
-    float x2  =  map( i+1, 0 , out.bufferSize(), 0, width );
-    line(x1, 450 + out.right.get(i)*100, x2,250 + out.right.get(i+1)*100);
+    float x2  =  map( i+1, 0, out.bufferSize(), 0, width );
+    line(x1, 450 + out.right.get(i)*100, x2, 250 + out.right.get(i+1)*100);
   }  
   text( "Filter type: " + moog.type, 10, 225 );
   text( "Filter cutoff: " + moog.frequency.getLastValue() + " Hz", 10, 245 );
-  text( "Filter resonance: " + moog.resonance.getLastValue(), 10, 265 ); 
+  text( "Filter resonance: " + moog.resonance.getLastValue(), 10, 265 );
 } 
 
 void noteOn(int channel, int pitch, int velocity) {
