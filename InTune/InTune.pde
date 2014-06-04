@@ -25,9 +25,8 @@ Knob[] guiknobs = {
   a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
 };
 String[] knobNames = {
-  OSCA Freq
-}
-
+  "OSCA Freq"
+};
 
 ControlP5 cp5;
 double[] scale;
@@ -92,14 +91,13 @@ void setup() {
   for (int i = 0; i < guiknobs.length; i++) {
     guiknobs[i] = cp5.addKnob(""+i)
       .setRange(0, 127)
-        .setPosition(80*i+10, height-90)
+        .setPosition((80*i)+10, height-(90*(i/8+1)))
           .setRadius(30)
             .setDragDirection(Knob.VERTICAL)
               .setDecimalPrecision(0)
                 .shuffle()
                   .setShowAngleRange(false)
                     ;
-    guiknobs[i].setLabel(""+"knob "+guiknobs[i].getName());
   }
 }
 
@@ -186,7 +184,7 @@ void noteOff(int channel, int pitch, int velocity) {
 void controllerChange(int channel, int number, int value) {
   println("CC: " + number + " @ " + value);
   knobs[number] = value;
-  if(number >= 15 && number <= 32)
+  if (number >= 15 && number <= 32)
     guiknobs[number-16].setValue(value);
 }
 
