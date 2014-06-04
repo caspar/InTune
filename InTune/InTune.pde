@@ -18,13 +18,16 @@ Midi2Hz midi;
 ADSR  adsr;
 
 
-
 int[] knobs = new int[100]; //change length later
-Knob a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p;
+Knob a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
 
 Knob[] guiknobs = {
-  a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p
+  a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
 };
+String[] knobNames = {
+  OSCA Freq
+}
+
 
 ControlP5 cp5;
 double[] scale;
@@ -183,6 +186,8 @@ void noteOff(int channel, int pitch, int velocity) {
 void controllerChange(int channel, int number, int value) {
   println("CC: " + number + " @ " + value);
   knobs[number] = value;
+  if(number >= 15 && number <= 32)
+    guiknobs[number-16].setValue(value);
 }
 
 void stop()
