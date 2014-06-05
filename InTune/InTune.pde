@@ -91,7 +91,8 @@ void setup() {
   for (int i = 0; i < guiknobs.length; i++) {
     guiknobs[i] = cp5.addKnob(""+i)
       .setRange(0, 127)
-        .setPosition((80*i)+10, height-(90*(i/8+1)))
+      //i checked this five times before realizing that there are actually 26 knobs
+        .setPosition(80*(i % 8)+10, height-(90*(i/8+1)))
           .setRadius(30)
             .setDragDirection(Knob.VERTICAL)
               .setDecimalPrecision(0)
