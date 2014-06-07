@@ -157,6 +157,7 @@ void customize(ListBox ddl) {
 
 void keyPressed()
 {
+  //the way this is written means what any key not listed plays the last note but i guess that's not a huge problem
   if ( key == 'a' ) midi.setMidiNoteIn( 50 );
   if ( key == 's' ) midi.setMidiNoteIn( 52 );
   if ( key == 'd' ) midi.setMidiNoteIn( 54 );
@@ -171,8 +172,7 @@ void keyPressed()
   if ( key == '1' ) moog.type = MoogFilter.Type.LP;
   if ( key == '2' ) moog.type = MoogFilter.Type.HP;
   if ( key == '3' ) moog.type = MoogFilter.Type.BP;
-  //println(midi.getLastValues()); it does change the note
-  // ...which means something about noteOn isn't working with just the keyboard
+  //it works now and i have NO IDEA WHY
   adsr.noteOn();
   adsr.patch( out );
 }
