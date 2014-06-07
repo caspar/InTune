@@ -104,7 +104,7 @@ void setup() {
                     ;
   }
    // create a DropdownList for mode
-  DropdownList d1 = cp5.addDropdownList("Mode");
+  ListBox d1 = cp5.addListBox("Mode");
   d1.setPosition(700, 600);
   customize(d1);
   d1.addItem("Ionian",0);
@@ -114,37 +114,45 @@ void setup() {
   d1.addItem("Mixolydian",4);
   d1.addItem("Aeolian",5);
   d1.addItem("Locrian",6);
+  Textlabel keyLabel = cp5.addTextlabel("Key Label")
+    .setPosition(930, 585)
+      .setSize(15,100)
+        .setText("CHOOSE A KEY");
+  //no idea what font that is????
+  //        .setFont();
   //create one for key
-  DropdownList d2 = cp5.addDropdownList("Key");
-  d2.setPosition(950,600);
-  customize(d2);
-  d2.addItem("Af", 0);
-  d2.addItem("A", 1);
-  d2.addItem("As", 2);
-  d2.addItem("Bf", 3);
-  d2.addItem("B", 4);
-  d2.addItem("C", 5);
-  d2.addItem("Cs", 6);
-  d2.addItem("Df", 7);
-  d2.addItem("D", 8);
-  d2.addItem("F", 9);
-  d2.addItem("Fs", 10);
-  d2.addItem("Gf", 11);  
-  d2.addItem("G", 12);
-  d2.addItem("Gs", 13);
+  RadioButton r1 = cp5.addRadioButton("Key")
+    .setPosition(930, 600)
+      .setSize(15, 15)
+         .setItemsPerRow(2)
+            .setSpacingColumn(30)
+              .setColorLabel(color(255));
+  r1.addItem("Af", 0);
+  r1.addItem("A", 1);
+  r1.addItem("As", 2);
+  r1.addItem("Bf", 3);
+  r1.addItem("B", 4);
+  r1.addItem("C", 5);
+  r1.addItem("Cs", 6);
+  r1.addItem("Df", 7);
+  r1.addItem("D", 8);
+  r1.addItem("F", 9);
+  r1.addItem("Fs", 10);
+  r1.addItem("Gf", 11);  
+  r1.addItem("G", 12);
+  r1.addItem("Gs", 13);
 }
 
-void customize(DropdownList ddl) {
-  //ddl.setBackgroundColor(color(190));
+void customize(ListBox ddl) {
   ddl.setSize(200,200);
-  ddl.setItemHeight(20);
+  ddl.setItemHeight(15);
   ddl.setBarHeight(15);
-  ddl.captionLabel().set("choose one");
+  ddl.captionLabel().set("choose a mode");
   ddl.captionLabel().style().marginTop = 3;
   ddl.captionLabel().style().marginLeft = 3;
   ddl.valueLabel().style().marginTop = 3;
-  //ddl.setColorBackground(color(60));
-  //ddl.setColorActive(color(255,128));
+  //doesn't actually show you which is selected
+  ddl.setColorActive(color(255,128));
 }
 
 void keyPressed()
@@ -241,11 +249,12 @@ void controlEvent(ControlEvent theEvent) {
       keyOf = (int)theEvent.group().value();
     }
     setScale(mode, keyOf);
-    println(Arrays.toString(scale));
+    //println(Arrays.toString(scale));
   } else if(theEvent.isController()) {
     //i don't know what this is but apparently it's supposed to be here
     //shouldn't this already be covered by controllerChange?
     //or is that just when physical knobs are moved
+    //wait do we need this here for the knobs to do anything by themselves
   }
 }
 
