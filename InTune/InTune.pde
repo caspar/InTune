@@ -1,5 +1,6 @@
 //Caspar Lant and Eliza Hripcsak
 //InTune 
+import java.util.*;
 import controlP5.*;
 import themidibus.*;
 import ddf.minim.*;
@@ -30,6 +31,8 @@ String[] knobNames = {
 
 ControlP5 cp5;
 double[] scale;
+int mode;
+int keyOf;
 int[] colors = {
   #FF0000, #00FF00, #0000FF
 };
@@ -91,7 +94,7 @@ void setup() {
   for (int i = 0; i < guiknobs.length; i++) {
     guiknobs[i] = cp5.addKnob(""+i)
       .setRange(0, 127)
-      //i checked this five times before realizing that there are actually 26 knobs
+      //i checked this five times because i was confused that more showed up before realizing that there are actually 26 knobs
         .setPosition(80*(i % 8)+10, height-(90*(i/8+1)))
           .setRadius(30)
             .setDragDirection(Knob.VERTICAL)
@@ -100,6 +103,48 @@ void setup() {
                   .setShowAngleRange(false)
                     ;
   }
+   // create a DropdownList for mode
+  DropdownList d1 = cp5.addDropdownList("Mode");
+  d1.setPosition(700, 600);
+  customize(d1);
+  d1.addItem("Ionian",0);
+  d1.addItem("Dorian",1);
+  d1.addItem("Phrygian",2);
+  d1.addItem("Lydian",3);
+  d1.addItem("Mixolydian",4);
+  d1.addItem("Aeolian",5);
+  d1.addItem("Locrian",6);
+  //create one for key
+  DropdownList d2 = cp5.addDropdownList("Key");
+  d2.setPosition(950,600);
+  customize(d2);
+  d2.addItem("Af", 0);
+  d2.addItem("A", 1);
+  d2.addItem("As", 2);
+  d2.addItem("Bf", 3);
+  d2.addItem("B", 4);
+  d2.addItem("C", 5);
+  d2.addItem("Cs", 6);
+  d2.addItem("Df", 7);
+  d2.addItem("D", 8);
+  d2.addItem("F", 9);
+  d2.addItem("Fs", 10);
+  d2.addItem("Gf", 11);  
+  d2.addItem("G", 12);
+  d2.addItem("Gs", 13);
+}
+
+void customize(DropdownList ddl) {
+  //ddl.setBackgroundColor(color(190));
+  ddl.setSize(200,200);
+  ddl.setItemHeight(20);
+  ddl.setBarHeight(15);
+  ddl.captionLabel().set("choose one");
+  ddl.captionLabel().style().marginTop = 3;
+  ddl.captionLabel().style().marginLeft = 3;
+  ddl.valueLabel().style().marginTop = 3;
+  //ddl.setColorBackground(color(60));
+  //ddl.setColorActive(color(255,128));
 }
 
 void keyPressed()
@@ -118,12 +163,13 @@ void keyPressed()
   if ( key == '1' ) moog.type = MoogFilter.Type.LP;
   if ( key == '2' ) moog.type = MoogFilter.Type.HP;
   if ( key == '3' ) moog.type = MoogFilter.Type.BP;
+  //println(midi.getLastValues()); it does change the note
+  // ...which means something about noteOn isn't working with just the keyboard
   adsr.noteOn();
   adsr.patch( out );
 }
 
-void getScale(int mode, int keyOf) {
-  //returns scale
+void setScale(int mode, int keyOf) {
   //modes are 0-6
   //[I D P L M A L]
   //[Ionian Dorian Phyrigian Lydian Mixolydian Aeolian Locrian]
@@ -133,16 +179,20 @@ void getScale(int mode, int keyOf) {
   int[] steps = new int[7];
   scale = new double[7];
   //for (int i = mode ; i != mode - 1; i++){
-  int ii;
+  int j;
   for (int i = 0; i < 7; i++) {
-    ii = (i + mode) % 7; 
-    steps[i] = Ionian[ii];
+    j = (i + mode) % 7; 
+    steps[i] = Ionian[j];
   }
-  //update: this is literally exactly what you did sorry caspie
-  int count = 0;
+  //i think the key is supposed to have something to do with this??
+  //but i don't really know where it goes  
+  int freqCount = keyOf;
+  int scaleCount = 0;
   for (int s : steps) {
-    count += steps[s];
-    scale[s] = chromFreqs[s];
+    freqCount += steps[s];
+    freqCount = freqCount % chromFreqs.length;
+    scale[scaleCount] = chromFreqs[freqCount];
+    scaleCount++;
   }
 }
 
@@ -180,6 +230,23 @@ void noteOn(int channel, int pitch, int velocity) {
 
 void noteOff(int channel, int pitch, int velocity) {
   println("Note Off: " + pitch + " @ " + velocity);
+}
+
+void controlEvent(ControlEvent theEvent) {
+  // if the event is from a group, which is the case with the dropdownlist
+  if (theEvent.isGroup()) {
+    if (theEvent.group().name().equals("Mode")) {
+      mode = (int)theEvent.group().value();
+    } else if (theEvent.group().name().equals("Key")) {
+      keyOf = (int)theEvent.group().value();
+    }
+    setScale(mode, keyOf);
+    println(Arrays.toString(scale));
+  } else if(theEvent.isController()) {
+    //i don't know what this is but apparently it's supposed to be here
+    //shouldn't this already be covered by controllerChange?
+    //or is that just when physical knobs are moved
+  }
 }
 
 void controllerChange(int channel, int number, int value) {
