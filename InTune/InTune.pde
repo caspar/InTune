@@ -78,6 +78,8 @@ void setup() {
   minim = new Minim(this);
   out = minim.getLineOut();
   cp5 = new ControlP5(this);
+  //i dunno what font you want
+  //cp5.setControlFont(new ControlFont(createFont("ZapfDingbatsITC", 10), 10));
   // create a sine wave Oscil, set to 440 Hz, at 0.5 amplitude
   sinwave = new Oscil( 0, 1.8f, Waves.SINE );  
   triwave = new Oscil( 0, 2f, Waves.TRIANGLE );
@@ -92,7 +94,7 @@ void setup() {
   triwave.patch(adsr);
   sinwave.patch(adsr);
   for (int i = 0; i < guiknobs.length; i++) {
-    guiknobs[i] = cp5.addKnob(""+i)
+    guiknobs[i] = cp5.addKnob("" + i)
       .setRange(0, 127)
       //i checked this five times because i was confused that more showed up before realizing that there are actually 26 knobs
         .setPosition(80*(i % 8)+10, height-(90*(i/8+1)))
@@ -103,7 +105,7 @@ void setup() {
                   .setShowAngleRange(false)
                     ;
   }
-   // create a DropdownList for mode
+   // create a ListBox for mode
   ListBox d1 = cp5.addListBox("Mode");
   d1.setPosition(700, 600);
   customize(d1);
