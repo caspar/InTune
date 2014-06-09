@@ -89,7 +89,7 @@ void setup() {
   triwave.patch(adsr);
   sinwave.patch(adsr);
   for (int i = 0; i < guiknobs.length; i++) {
-    guiknobs[i] = cp5.addKnob(""+i)
+    guiknobs[i] = cp5.addKnob(""+(i+1))
       .setRange(0, 127)
         .setPosition((80*i)+10, height-(90*(i/8+1)))
           .setRadius(30)
