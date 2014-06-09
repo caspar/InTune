@@ -18,7 +18,10 @@ MoogFilter moog;
 Midi2Hz midi;
 ADSR  adsr;
 //i feel kind of bad for using an arraylist but i don't have time for this
-ArrayList<Float> notesPlayed = new ArrayList<Float>();
+//ArrayList<Float> notesPlayed = new ArrayList<Float>();
+//only needed to be float when i was trying not to do things the sucky way
+ArrayList<Integer> notesPlayed = new ArrayList<Integer>();
+boolean record = false;
 
 int[] knobs = new int[100]; //change length later
 Knob a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
@@ -109,6 +112,9 @@ void setup() {
                     ;
   }
   
+  Toggle record = cp5.addToggle("record")
+    .setPosition(1050,717);
+  
   // create a ListBox for mode
   ListBox d1 = cp5.addListBox("Mode");
   d1.setPosition(1050, 600);
@@ -166,23 +172,55 @@ void customize(ListBox ddl) {
 void keyPressed()
 {
   //the way this is written means what any key not listed plays the last note but i guess that's not a huge problem
-  if ( key == 'a' ) midi.setMidiNoteIn( 50 );
-  if ( key == 's' ) midi.setMidiNoteIn( 52 );
-  if ( key == 'd' ) midi.setMidiNoteIn( 54 );
-  if ( key == 'f' ) midi.setMidiNoteIn( 55 );
-  if ( key == 'g' ) midi.setMidiNoteIn( 57 );
-  if ( key == 'h' ) midi.setMidiNoteIn( 59 );
-  if ( key == 'j' ) midi.setMidiNoteIn( 61 );
-  if ( key == 'k' ) midi.setMidiNoteIn( 62 );
-  if ( key == 'l' ) midi.setMidiNoteIn( 64 );
-  if ( key == ';' ) midi.setMidiNoteIn( 66 );
-  if ( key == '\'') midi.setMidiNoteIn( 67 );
+  if ( key == 'a' ){
+    midi.setMidiNoteIn( 50 );
+    if (record) notesPlayed.add(50);
+  }
+  if ( key == 's' ){
+    midi.setMidiNoteIn( 52 );
+    if (record) notesPlayed.add(52);
+  }
+  if ( key == 'd' ){
+    midi.setMidiNoteIn( 54 );
+    if (record) notesPlayed.add(54);
+  }
+  if ( key == 'f' ){
+    midi.setMidiNoteIn( 55 );
+    if (record) notesPlayed.add(55);
+  }
+  if ( key == 'g' ){
+    midi.setMidiNoteIn( 57 );
+    if (record) notesPlayed.add(57);
+  }
+  if ( key == 'h' ){
+    midi.setMidiNoteIn( 59 );
+    if (record) notesPlayed.add(59);
+  }
+  if ( key == 'j' ){
+    midi.setMidiNoteIn( 61 );
+    if (record) notesPlayed.add(61);
+  }
+  if ( key == 'k' ){
+    midi.setMidiNoteIn( 62 );
+    if (record) notesPlayed.add(50);
+  }
+  if ( key == 'l' ){
+    midi.setMidiNoteIn( 64 );
+    if (record) notesPlayed.add(64);
+  }
+  if ( key == ';' ){
+    midi.setMidiNoteIn( 66 );
+    if (record) notesPlayed.add(66);
+  }
+  if ( key == '\''){
+    midi.setMidiNoteIn( 67 );
+    if (record) notesPlayed.add(67);
+  }
   if ( key == '1' ) moog.type = MoogFilter.Type.LP;
   if ( key == '2' ) moog.type = MoogFilter.Type.HP;
   if ( key == '3' ) moog.type = MoogFilter.Type.BP;
-  //it works now and i have NO IDEA WHY
-  notesPlayed.add(midi.getLastValues()[0]);
-  //println(notesPlayed);
+  //notesPlayed.add(midi.getLastValues()[0]);
+  println(notesPlayed);
   adsr.noteOn();
   adsr.patch( out );
 }
@@ -241,6 +279,11 @@ void draw() {
   text( "Filter cutoff: " + moog.frequency.getLastValue() + " Hz", 10, 245 );
   text( "Filter resonance: " + moog.resonance.getLastValue(), 10, 265 );
 } 
+
+void record(boolean flag){
+  record = flag;
+  if (!record) notesPlayed.clear();
+}
 
 void noteOn(int channel, int pitch, int velocity) {
   println("Note On: " + pitch + " @ " + velocity);
