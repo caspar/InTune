@@ -22,6 +22,7 @@ ADSR  adsr;
 //only needed to be float when i was trying not to do things the sucky way
 ArrayList<Integer> notesPlayed = new ArrayList<Integer>();
 boolean record = false;
+boolean play = false;
 
 int[] knobs = new int[100]; //change length later
 Knob a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
@@ -114,6 +115,15 @@ void setup() {
   
   Toggle record = cp5.addToggle("record")
     .setPosition(1050,717);
+  Bang clear = cp5.addBang("clear")
+    .setPosition(1105, 717)
+      .setSize(40,20);
+  Bang play = cp5.addBang("play")
+    .setPosition(1160,717)
+      .setSize(40,20);
+  Bang stopPlay = cp5.addBang("stop")
+    .setPosition(1215,717)
+      .setSize(40,20);
   
   // create a ListBox for mode
   ListBox d1 = cp5.addListBox("Mode");
@@ -282,7 +292,27 @@ void draw() {
 
 void record(boolean flag){
   record = flag;
-  if (!record) notesPlayed.clear();
+}
+
+void clear(){
+    notesPlayed.clear();
+}
+
+void play(){
+  play = true;
+  for (int n = 0; n < notesPlayed.size(); n++){
+    playMethod(n);
+  }
+}
+
+void stopPlay(){
+  play = false;
+}
+ 
+void playMethod(int n){
+  midi.setMidiNoteIn( notesPlayed.get(n) );
+  adsr.noteOn();
+  adsr.patch( out );
 }
 
 void noteOn(int channel, int pitch, int velocity) {
