@@ -196,12 +196,12 @@ void setScale(int mode, int keyOf) {
   }
   //i think the key is supposed to have something to do with this??
   //but i don't really know where it goes  
-  int freqCount = keyOf;
+  int keyCount = keyOf;
   int scaleCount = 0;
   for (int s : steps) {
-    freqCount += steps[s];
-    freqCount = freqCount % chromFreqs.length;
-    scale[scaleCount] = chromFreqs[freqCount];
+    keyCount += steps[s];
+    keyCount = keyCount % keys.length;
+    scale[scaleCount] = keys[keyCount];
     scaleCount++;
   }
 }
