@@ -80,6 +80,7 @@ void setup() {
   cp5 = new ControlP5(this);
   //i dunno what font you want
   //cp5.setControlFont(new ControlFont(createFont("ZapfDingbatsITC", 10), 10));
+  setScale(0,0);
   // create a sine wave Oscil, set to 440 Hz, at 0.5 amplitude
   sinwave = new Oscil( 0, 1.8f, Waves.SINE );  
   triwave = new Oscil( 0, 2f, Waves.TRIANGLE );
