@@ -102,11 +102,7 @@ void setup() {
   
   //create knobs
   for (int i = 0; i < guiknobs.length; i++) {
-<<<<<<< HEAD
-    guiknobs[i] = cp5.addKnob(""+(i+1))
-=======
-    guiknobs[i] = cp5.addKnob("" + i)
->>>>>>> 810df51d9e54fced583e449a0457edd097ad57fc
+    guiknobs[i] = cp5.addKnob("K" + i)
       .setRange(0, 127)
         .setPosition(80*(i % 13)+10, height-(90*(i/13+1)))
           .setRadius(30)
@@ -302,7 +298,7 @@ void clear(){
     notesPlayed.clear();
 }
 
-void play(){
+/*void play(){
   play = true;
   for (int n = 0; n < notesPlayed.size(); n++){
     playMethod(n);
@@ -318,6 +314,34 @@ void playMethod(int n){
   adsr.noteOn();
   adsr.patch( out );
 }
+*/
+
+void K0(int val){ knobs[0] = val; }
+void K1(int val){ knobs[1] = val; }
+void K2(int val){ knobs[2] = val; }
+void K3(int val){ knobs[3] = val; }
+void K4(int val){ knobs[4] = val; }
+void K5(int val){ knobs[5] = val; }
+void K6(int val){ knobs[6] = val; }
+void K7(int val){ knobs[7] = val; }
+void K8(int val){ knobs[8] = val; }
+void K9(int val){ knobs[9] = val; }
+void K10(int val){ knobs[10] = val; }
+void K11(int val){ knobs[11] = val; }
+void K12(int val){ knobs[12] = val; }
+void K13(int val){ knobs[13] = val; }
+void K14(int val){ knobs[14] = val; }
+void K15(int val){ knobs[15] = val; }
+void K16(int val){ knobs[16] = val; }
+void K17(int val){ knobs[17] = val; }
+void K18(int val){ knobs[18] = val; }
+void K19(int val){ knobs[19] = val; }
+void K20(int val){ knobs[20] = val; }
+void K21(int val){ knobs[21] = val; }
+void K22(int val){ knobs[22] = val; }
+void K23(int val){ knobs[23] = val; }
+void K24(int val){ knobs[24] = val; }
+void K25(int val){ knobs[25] = val; }
 
 void noteOn(int channel, int pitch, int velocity) {
   println("Note On: " + pitch + " @ " + velocity);
