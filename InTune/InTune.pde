@@ -9,6 +9,7 @@ import ddf.minim.ugens.*;
 MidiBus bus; 
 int sinFreq;
 int controllerNum;
+int tempo = 120;
 Minim minim;
 AudioOutput out;
 Oscil sinwave;
@@ -27,12 +28,14 @@ boolean play = false;
 int[] knobs = new int[100]; //change length later
 Knob a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
 
-Knob[] guiknobs = {
+Knob[] guiKnobs = {
   a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
 };
 String[] knobNames = {
-  "OSCA Freq"
+  "OSCA Freq", "OSCB Freq", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Tempo"
 };
+
+int[] noteBank = new int[16*2]; //2 is # of measures
 
 ControlP5 cp5;
 double[] scale;
@@ -76,6 +79,7 @@ final float[] keys = {
 };
 
 void setup() {
+  println(knobNames.length);
   size(1280, 758);
   background(0);
   MidiBus.list(); // List all available Midi devices on STDOUT. This will show each device's index and name.
@@ -85,7 +89,7 @@ void setup() {
   cp5 = new ControlP5(this);
   //i dunno what font you want
   //cp5.setControlFont(new ControlFont(createFont("ZapfDingbatsITC", 10), 10));
-  setScale(0,0);
+  setScale(0, 0);
   // create a sine wave Oscil, set to 440 Hz, at 0.5 amplitude
   sinwave = new Oscil( 0, 1.8f, Waves.SINE );  
   triwave = new Oscil( 0, 2f, Waves.TRIANGLE );
@@ -99,10 +103,10 @@ void setup() {
   // patch the Oscil to the output
   triwave.patch(adsr);
   sinwave.patch(adsr);
-  
+
   //create knobs
-  for (int i = 0; i < guiknobs.length; i++) {
-    guiknobs[i] = cp5.addKnob("K" + i)
+  for (int i = 0; i < guiKnobs.length-1; i++) {
+    guiKnobs[i] = cp5.addKnob(knobNames[i] +" "+ i+" ")
       .setRange(0, 127)
         .setPosition(80*(i % 13)+10, height-(90*(i/13+1)))
           .setRadius(30)
@@ -112,34 +116,43 @@ void setup() {
                   .setShowAngleRange(false)
                     ;
   }
-  
-  Toggle record = cp5.addToggle("record")
-    .setPosition(1050,717);
+  guiKnobs[guiKnobs.length-1] = cp5.addKnob("tempo")
+    .setRange(40, 300)
+      .setRadius(30)
+        .setDragDirection(Knob.VERTICAL)
+          .setDecimalPrecision(0)
+            .setValue(tempo)
+              .setShowAngleRange(false)
+              .setPosition(970,height-180)
+              ;
+
+                Toggle record = cp5.addToggle("record")
+                  .setPosition(1050, 717);
   Bang clear = cp5.addBang("clear")
     .setPosition(1105, 717)
-      .setSize(40,20);
+      .setSize(40, 20);
   Bang play = cp5.addBang("play")
-    .setPosition(1160,717)
-      .setSize(40,20);
+    .setPosition(1160, 717)
+      .setSize(40, 20);
   Bang stopPlay = cp5.addBang("stop")
-    .setPosition(1215,717)
-      .setSize(40,20);
-  
+    .setPosition(1215, 717)
+      .setSize(40, 20);
+
   // create a ListBox for mode
   ListBox d1 = cp5.addListBox("Mode");
   d1.setPosition(1050, 600);
   customize(d1);
-  d1.addItem("Ionian",0);
-  d1.addItem("Dorian",1);
-  d1.addItem("Phrygian",2);
-  d1.addItem("Lydian",3);
-  d1.addItem("Mixolydian",4);
-  d1.addItem("Aeolian",5);
-  d1.addItem("Locrian",6);
-  
+  d1.addItem("Ionian", 0);
+  d1.addItem("Dorian", 1);
+  d1.addItem("Phrygian", 2);
+  d1.addItem("Lydian", 3);
+  d1.addItem("Mixolydian", 4);
+  d1.addItem("Aeolian", 5);
+  d1.addItem("Locrian", 6);
+
   Textlabel keyLabel = cp5.addTextlabel("Key Label")
     .setPosition(1050, 531)
-      .setSize(15,100)
+      .setSize(15, 100)
         .setText("CHOOSE A KEY");
   //no idea what font that is????
   //        .setFont();
@@ -147,9 +160,9 @@ void setup() {
   RadioButton r1 = cp5.addRadioButton("Key")
     .setPosition(1050, 545)
       .setSize(10, 15)
-         .setItemsPerRow(7)
-            .setSpacingColumn(20)
-              .setColorLabel(color(255));
+        .setItemsPerRow(7)
+          .setSpacingColumn(20)
+            .setColorLabel(color(255));
   r1.addItem("Af", 0);
   r1.addItem("A", 1);
   r1.addItem("As", 2);
@@ -164,11 +177,10 @@ void setup() {
   r1.addItem("Gf", 11);  
   r1.addItem("G", 12);
   r1.addItem("Gs", 13);
-    
 }
 
 void customize(ListBox ddl) {
-  ddl.setSize(200,200);
+  ddl.setSize(200, 200);
   ddl.setItemHeight(15);
   ddl.setBarHeight(15);
   ddl.captionLabel().set("choose a mode");
@@ -176,53 +188,53 @@ void customize(ListBox ddl) {
   ddl.captionLabel().style().marginLeft = 3;
   ddl.valueLabel().style().marginTop = 3;
   //doesn't actually show you which is selected
-  ddl.setColorActive(color(255,128));
+  ddl.setColorActive(color(255, 128));
 }
 
 void keyPressed()
 {
   //the way this is written means what any key not listed plays the last note but i guess that's not a huge problem
-  if ( key == 'a' ){
+  if ( key == 'a' ) {
     midi.setMidiNoteIn( 50 );
     if (record) notesPlayed.add(50);
   }
-  if ( key == 's' ){
+  if ( key == 's' ) {
     midi.setMidiNoteIn( 52 );
     if (record) notesPlayed.add(52);
   }
-  if ( key == 'd' ){
+  if ( key == 'd' ) {
     midi.setMidiNoteIn( 54 );
     if (record) notesPlayed.add(54);
   }
-  if ( key == 'f' ){
+  if ( key == 'f' ) {
     midi.setMidiNoteIn( 55 );
     if (record) notesPlayed.add(55);
   }
-  if ( key == 'g' ){
+  if ( key == 'g' ) {
     midi.setMidiNoteIn( 57 );
     if (record) notesPlayed.add(57);
   }
-  if ( key == 'h' ){
+  if ( key == 'h' ) {
     midi.setMidiNoteIn( 59 );
     if (record) notesPlayed.add(59);
   }
-  if ( key == 'j' ){
+  if ( key == 'j' ) {
     midi.setMidiNoteIn( 61 );
     if (record) notesPlayed.add(61);
   }
-  if ( key == 'k' ){
+  if ( key == 'k' ) {
     midi.setMidiNoteIn( 62 );
     if (record) notesPlayed.add(50);
   }
-  if ( key == 'l' ){
+  if ( key == 'l' ) {
     midi.setMidiNoteIn( 64 );
     if (record) notesPlayed.add(64);
   }
-  if ( key == ';' ){
+  if ( key == ';' ) {
     midi.setMidiNoteIn( 66 );
     if (record) notesPlayed.add(66);
   }
-  if ( key == '\''){
+  if ( key == '\'') {
     midi.setMidiNoteIn( 67 );
     if (record) notesPlayed.add(67);
   }
@@ -263,15 +275,18 @@ void setScale(int mode, int keyOf) {
 }
 
 void draw() {
+  for (int i = 0; i < guiKnobs.length; i++){
+     knobs[i] = (int)guiKnobs[i].getValue();
+  }
   //sinwave.setFrequency((float)knobs[16]*2 + 70);
   //triwave.setFrequency((float)(knobs[17] + 80)/2);
-  sinwave.setFrequency(chromFreqs[knobs[16]/6] + 1);
-  triwave.setFrequency((chromFreqs[knobs[17]/6] + 1)/2);
-  sinwave.setAmplitude((float)knobs[24]/63 + 0.01);
-  triwave.setAmplitude((float)knobs[25]/63 + 0.01);
+  sinwave.setFrequency(chromFreqs[knobs[0]/6] + 1);
+  triwave.setFrequency((chromFreqs[knobs[1]/6] + 1)/2);
+  sinwave.setAmplitude((float)knobs[8]/63 + 0.01);
+  triwave.setAmplitude((float)knobs[9]/63 + 0.01);
 
-  moog.frequency.setLastValue((float)knobs[18]*20 );
-  moog.resonance.setLastValue((float)knobs[26]/127  );
+  moog.frequency.setLastValue((float)knobs[2]*20 );
+  moog.resonance.setLastValue((float)knobs[10]/127  );
 
   //sinwave.setFrequency(cM[sinFreq/18]*8);
   //triwave.setFrequency(cM[sinFreq/18]*4);
@@ -290,58 +305,31 @@ void draw() {
   text( "Filter resonance: " + moog.resonance.getLastValue(), 10, 265 );
 } 
 
-void record(boolean flag){
+void record(boolean flag) {
   record = flag;
 }
 
-void clear(){
-    notesPlayed.clear();
+void clear() {
+  notesPlayed.clear();
 }
 
 /*void play(){
-  play = true;
-  for (int n = 0; n < notesPlayed.size(); n++){
-    playMethod(n);
-  }
-}
-
-void stopPlay(){
-  play = false;
-}
+ play = true;
+ for (int n = 0; n < notesPlayed.size(); n++){
+ playMethod(n);
+ }
+ }
  
-void playMethod(int n){
-  midi.setMidiNoteIn( notesPlayed.get(n) );
-  adsr.noteOn();
-  adsr.patch( out );
-}
-*/
-
-void K0(int val){ knobs[0] = val; }
-void K1(int val){ knobs[1] = val; }
-void K2(int val){ knobs[2] = val; }
-void K3(int val){ knobs[3] = val; }
-void K4(int val){ knobs[4] = val; }
-void K5(int val){ knobs[5] = val; }
-void K6(int val){ knobs[6] = val; }
-void K7(int val){ knobs[7] = val; }
-void K8(int val){ knobs[8] = val; }
-void K9(int val){ knobs[9] = val; }
-void K10(int val){ knobs[10] = val; }
-void K11(int val){ knobs[11] = val; }
-void K12(int val){ knobs[12] = val; }
-void K13(int val){ knobs[13] = val; }
-void K14(int val){ knobs[14] = val; }
-void K15(int val){ knobs[15] = val; }
-void K16(int val){ knobs[16] = val; }
-void K17(int val){ knobs[17] = val; }
-void K18(int val){ knobs[18] = val; }
-void K19(int val){ knobs[19] = val; }
-void K20(int val){ knobs[20] = val; }
-void K21(int val){ knobs[21] = val; }
-void K22(int val){ knobs[22] = val; }
-void K23(int val){ knobs[23] = val; }
-void K24(int val){ knobs[24] = val; }
-void K25(int val){ knobs[25] = val; }
+ void stopPlay(){
+ play = false;
+ }
+ 
+ void playMethod(int n){
+ midi.setMidiNoteIn( notesPlayed.get(n) );
+ adsr.noteOn();
+ adsr.patch( out );
+ }
+ */
 
 void noteOn(int channel, int pitch, int velocity) {
   println("Note On: " + pitch + " @ " + velocity);
@@ -361,7 +349,7 @@ void controlEvent(ControlEvent theEvent) {
     }
     setScale(mode, keyOf);
     //println(Arrays.toString(scale));
-  } else if(theEvent.isController()) {
+  } else if (theEvent.isController()) {
     //i don't know what this is but apparently it's supposed to be here
     //shouldn't this already be covered by controllerChange?
     //or is that just when physical knobs are moved
@@ -371,9 +359,9 @@ void controlEvent(ControlEvent theEvent) {
 
 void controllerChange(int channel, int number, int value) {
   println("CC: " + number + " @ " + value);
-  knobs[number] = value;
+  knobs[number-16] = value;
   if (number >= 15 && number <= 32)
-    guiknobs[number-16].setValue(value);
+    guiKnobs[number-16].setValue(value);
 }
 
 void stop()
