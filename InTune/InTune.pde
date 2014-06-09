@@ -1,5 +1,6 @@
 //Caspar Lant and Eliza Hripcsak
 //InTune 
+import java.util.*;
 import controlP5.*;
 import themidibus.*;
 import ddf.minim.*;
@@ -16,7 +17,12 @@ Oscil sqrwave;
 MoogFilter moog;
 Midi2Hz midi;
 ADSR  adsr;
-
+//i feel kind of bad for using an arraylist but i don't have time for this
+//ArrayList<Float> notesPlayed = new ArrayList<Float>();
+//only needed to be float when i was trying not to do things the sucky way
+ArrayList<Integer> notesPlayed = new ArrayList<Integer>();
+boolean record = false;
+boolean play = false;
 
 int[] knobs = new int[100]; //change length later
 Knob a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
@@ -30,6 +36,8 @@ String[] knobNames = {
 
 ControlP5 cp5;
 double[] scale;
+int mode;
+int keyOf;
 int[] colors = {
   #FF0000, #00FF00, #0000FF
 };
@@ -75,6 +83,9 @@ void setup() {
   minim = new Minim(this);
   out = minim.getLineOut();
   cp5 = new ControlP5(this);
+  //i dunno what font you want
+  //cp5.setControlFont(new ControlFont(createFont("ZapfDingbatsITC", 10), 10));
+  setScale(0,0);
   // create a sine wave Oscil, set to 440 Hz, at 0.5 amplitude
   sinwave = new Oscil( 0, 1.8f, Waves.SINE );  
   triwave = new Oscil( 0, 2f, Waves.TRIANGLE );
@@ -88,10 +99,16 @@ void setup() {
   // patch the Oscil to the output
   triwave.patch(adsr);
   sinwave.patch(adsr);
+  
+  //create knobs
   for (int i = 0; i < guiknobs.length; i++) {
+<<<<<<< HEAD
     guiknobs[i] = cp5.addKnob(""+(i+1))
+=======
+    guiknobs[i] = cp5.addKnob("" + i)
+>>>>>>> 810df51d9e54fced583e449a0457edd097ad57fc
       .setRange(0, 127)
-        .setPosition((80*i)+10, height-(90*(i/8+1)))
+        .setPosition(80*(i % 13)+10, height-(90*(i/13+1)))
           .setRadius(30)
             .setDragDirection(Knob.VERTICAL)
               .setDecimalPrecision(0)
@@ -99,30 +116,130 @@ void setup() {
                   .setShowAngleRange(false)
                     ;
   }
+  
+  Toggle record = cp5.addToggle("record")
+    .setPosition(1050,717);
+  Bang clear = cp5.addBang("clear")
+    .setPosition(1105, 717)
+      .setSize(40,20);
+  Bang play = cp5.addBang("play")
+    .setPosition(1160,717)
+      .setSize(40,20);
+  Bang stopPlay = cp5.addBang("stop")
+    .setPosition(1215,717)
+      .setSize(40,20);
+  
+  // create a ListBox for mode
+  ListBox d1 = cp5.addListBox("Mode");
+  d1.setPosition(1050, 600);
+  customize(d1);
+  d1.addItem("Ionian",0);
+  d1.addItem("Dorian",1);
+  d1.addItem("Phrygian",2);
+  d1.addItem("Lydian",3);
+  d1.addItem("Mixolydian",4);
+  d1.addItem("Aeolian",5);
+  d1.addItem("Locrian",6);
+  
+  Textlabel keyLabel = cp5.addTextlabel("Key Label")
+    .setPosition(1050, 531)
+      .setSize(15,100)
+        .setText("CHOOSE A KEY");
+  //no idea what font that is????
+  //        .setFont();
+  //create one for key
+  RadioButton r1 = cp5.addRadioButton("Key")
+    .setPosition(1050, 545)
+      .setSize(10, 15)
+         .setItemsPerRow(7)
+            .setSpacingColumn(20)
+              .setColorLabel(color(255));
+  r1.addItem("Af", 0);
+  r1.addItem("A", 1);
+  r1.addItem("As", 2);
+  r1.addItem("Bf", 3);
+  r1.addItem("B", 4);
+  r1.addItem("C", 5);
+  r1.addItem("Cs", 6);
+  r1.addItem("Df", 7);
+  r1.addItem("D", 8);
+  r1.addItem("F", 9);
+  r1.addItem("Fs", 10);
+  r1.addItem("Gf", 11);  
+  r1.addItem("G", 12);
+  r1.addItem("Gs", 13);
+    
+}
+
+void customize(ListBox ddl) {
+  ddl.setSize(200,200);
+  ddl.setItemHeight(15);
+  ddl.setBarHeight(15);
+  ddl.captionLabel().set("choose a mode");
+  ddl.captionLabel().style().marginTop = 3;
+  ddl.captionLabel().style().marginLeft = 3;
+  ddl.valueLabel().style().marginTop = 3;
+  //doesn't actually show you which is selected
+  ddl.setColorActive(color(255,128));
 }
 
 void keyPressed()
 {
-  if ( key == 'a' ) midi.setMidiNoteIn( 50 );
-  if ( key == 's' ) midi.setMidiNoteIn( 52 );
-  if ( key == 'd' ) midi.setMidiNoteIn( 54 );
-  if ( key == 'f' ) midi.setMidiNoteIn( 55 );
-  if ( key == 'g' ) midi.setMidiNoteIn( 57 );
-  if ( key == 'h' ) midi.setMidiNoteIn( 59 );
-  if ( key == 'j' ) midi.setMidiNoteIn( 61 );
-  if ( key == 'k' ) midi.setMidiNoteIn( 62 );
-  if ( key == 'l' ) midi.setMidiNoteIn( 64 );
-  if ( key == ';' ) midi.setMidiNoteIn( 66 );
-  if ( key == '\'') midi.setMidiNoteIn( 67 );
+  //the way this is written means what any key not listed plays the last note but i guess that's not a huge problem
+  if ( key == 'a' ){
+    midi.setMidiNoteIn( 50 );
+    if (record) notesPlayed.add(50);
+  }
+  if ( key == 's' ){
+    midi.setMidiNoteIn( 52 );
+    if (record) notesPlayed.add(52);
+  }
+  if ( key == 'd' ){
+    midi.setMidiNoteIn( 54 );
+    if (record) notesPlayed.add(54);
+  }
+  if ( key == 'f' ){
+    midi.setMidiNoteIn( 55 );
+    if (record) notesPlayed.add(55);
+  }
+  if ( key == 'g' ){
+    midi.setMidiNoteIn( 57 );
+    if (record) notesPlayed.add(57);
+  }
+  if ( key == 'h' ){
+    midi.setMidiNoteIn( 59 );
+    if (record) notesPlayed.add(59);
+  }
+  if ( key == 'j' ){
+    midi.setMidiNoteIn( 61 );
+    if (record) notesPlayed.add(61);
+  }
+  if ( key == 'k' ){
+    midi.setMidiNoteIn( 62 );
+    if (record) notesPlayed.add(50);
+  }
+  if ( key == 'l' ){
+    midi.setMidiNoteIn( 64 );
+    if (record) notesPlayed.add(64);
+  }
+  if ( key == ';' ){
+    midi.setMidiNoteIn( 66 );
+    if (record) notesPlayed.add(66);
+  }
+  if ( key == '\''){
+    midi.setMidiNoteIn( 67 );
+    if (record) notesPlayed.add(67);
+  }
   if ( key == '1' ) moog.type = MoogFilter.Type.LP;
   if ( key == '2' ) moog.type = MoogFilter.Type.HP;
   if ( key == '3' ) moog.type = MoogFilter.Type.BP;
+  //notesPlayed.add(midi.getLastValues()[0]);
+  println(notesPlayed);
   adsr.noteOn();
   adsr.patch( out );
 }
 
-void getScale(int mode, int keyOf) {
-  //returns scale
+void setScale(int mode, int keyOf) {
   //modes are 0-6
   //[I D P L M A L]
   //[Ionian Dorian Phyrigian Lydian Mixolydian Aeolian Locrian]
@@ -132,16 +249,20 @@ void getScale(int mode, int keyOf) {
   int[] steps = new int[7];
   scale = new double[7];
   //for (int i = mode ; i != mode - 1; i++){
-  int ii;
+  int j;
   for (int i = 0; i < 7; i++) {
-    ii = (i + mode) % 7; 
-    steps[i] = Ionian[ii];
+    j = (i + mode) % 7; 
+    steps[i] = Ionian[j];
   }
-  //update: this is literally exactly what you did sorry caspie
-  int count = 0;
+  //i think the key is supposed to have something to do with this??
+  //but i don't really know where it goes  
+  int keyCount = keyOf;
+  int scaleCount = 0;
   for (int s : steps) {
-    count += steps[s];
-    scale[s] = chromFreqs[s];
+    keyCount += steps[s];
+    keyCount = keyCount % keys.length;
+    scale[scaleCount] = keys[keyCount];
+    scaleCount++;
   }
 }
 
@@ -173,12 +294,55 @@ void draw() {
   text( "Filter resonance: " + moog.resonance.getLastValue(), 10, 265 );
 } 
 
+void record(boolean flag){
+  record = flag;
+}
+
+void clear(){
+    notesPlayed.clear();
+}
+
+void play(){
+  play = true;
+  for (int n = 0; n < notesPlayed.size(); n++){
+    playMethod(n);
+  }
+}
+
+void stopPlay(){
+  play = false;
+}
+ 
+void playMethod(int n){
+  midi.setMidiNoteIn( notesPlayed.get(n) );
+  adsr.noteOn();
+  adsr.patch( out );
+}
+
 void noteOn(int channel, int pitch, int velocity) {
   println("Note On: " + pitch + " @ " + velocity);
 }
 
 void noteOff(int channel, int pitch, int velocity) {
   println("Note Off: " + pitch + " @ " + velocity);
+}
+
+void controlEvent(ControlEvent theEvent) {
+  // if the event is from a group, which is the case with the ListBox
+  if (theEvent.isGroup()) {
+    if (theEvent.group().name().equals("Mode")) {
+      mode = (int)theEvent.group().value();
+    } else if (theEvent.group().name().equals("Key")) {
+      keyOf = (int)theEvent.group().value();
+    }
+    setScale(mode, keyOf);
+    //println(Arrays.toString(scale));
+  } else if(theEvent.isController()) {
+    //i don't know what this is but apparently it's supposed to be here
+    //shouldn't this already be covered by controllerChange?
+    //or is that just when physical knobs are moved
+    //wait do we need this here for the knobs to do anything by themselves
+  }
 }
 
 void controllerChange(int channel, int number, int value) {
