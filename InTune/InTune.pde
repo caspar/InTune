@@ -17,7 +17,8 @@ Oscil sqrwave;
 MoogFilter moog;
 Midi2Hz midi;
 ADSR  adsr;
-
+//i feel kind of bad for using an arraylist but i don't have time for this
+ArrayList<Float> notesPlayed = new ArrayList<Float>();
 
 int[] knobs = new int[100]; //change length later
 Knob a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
@@ -94,11 +95,12 @@ void setup() {
   // patch the Oscil to the output
   triwave.patch(adsr);
   sinwave.patch(adsr);
+  
+  //create knobs
   for (int i = 0; i < guiknobs.length; i++) {
     guiknobs[i] = cp5.addKnob("" + i)
       .setRange(0, 127)
-      //i checked this five times because i was confused that more showed up before realizing that there are actually 26 knobs
-        .setPosition(80*(i % 8)+10, height-(90*(i/8+1)))
+        .setPosition(80*(i % 13)+10, height-(90*(i/13+1)))
           .setRadius(30)
             .setDragDirection(Knob.VERTICAL)
               .setDecimalPrecision(0)
@@ -106,9 +108,10 @@ void setup() {
                   .setShowAngleRange(false)
                     ;
   }
-   // create a ListBox for mode
+  
+  // create a ListBox for mode
   ListBox d1 = cp5.addListBox("Mode");
-  d1.setPosition(700, 600);
+  d1.setPosition(1050, 600);
   customize(d1);
   d1.addItem("Ionian",0);
   d1.addItem("Dorian",1);
@@ -117,18 +120,19 @@ void setup() {
   d1.addItem("Mixolydian",4);
   d1.addItem("Aeolian",5);
   d1.addItem("Locrian",6);
+  
   Textlabel keyLabel = cp5.addTextlabel("Key Label")
-    .setPosition(930, 585)
+    .setPosition(1050, 531)
       .setSize(15,100)
         .setText("CHOOSE A KEY");
   //no idea what font that is????
   //        .setFont();
   //create one for key
   RadioButton r1 = cp5.addRadioButton("Key")
-    .setPosition(930, 600)
-      .setSize(15, 15)
-         .setItemsPerRow(2)
-            .setSpacingColumn(30)
+    .setPosition(1050, 545)
+      .setSize(10, 15)
+         .setItemsPerRow(7)
+            .setSpacingColumn(20)
               .setColorLabel(color(255));
   r1.addItem("Af", 0);
   r1.addItem("A", 1);
@@ -144,6 +148,7 @@ void setup() {
   r1.addItem("Gf", 11);  
   r1.addItem("G", 12);
   r1.addItem("Gs", 13);
+    
 }
 
 void customize(ListBox ddl) {
@@ -176,6 +181,8 @@ void keyPressed()
   if ( key == '2' ) moog.type = MoogFilter.Type.HP;
   if ( key == '3' ) moog.type = MoogFilter.Type.BP;
   //it works now and i have NO IDEA WHY
+  notesPlayed.add(midi.getLastValues()[0]);
+  //println(notesPlayed);
   adsr.noteOn();
   adsr.patch( out );
 }
@@ -244,7 +251,7 @@ void noteOff(int channel, int pitch, int velocity) {
 }
 
 void controlEvent(ControlEvent theEvent) {
-  // if the event is from a group, which is the case with the dropdownlist
+  // if the event is from a group, which is the case with the ListBox
   if (theEvent.isGroup()) {
     if (theEvent.group().name().equals("Mode")) {
       mode = (int)theEvent.group().value();
