@@ -19,21 +19,17 @@ Oscil sqrwave;
 MoogFilter moog;
 Midi2Hz midi;
 ADSR  adsr;
+Wavetable random; //experimenting
 
-<<<<<<< HEAD
-=======
-//i feel kind of bad for using an arraylist but i don't have time for this
-ArrayList<Float> notesPlayed = new ArrayList<Float>();
-
->>>>>>> ef160c3dbf26bff84eeda8a731bfa8bc33efa16e
 boolean record = false;
 boolean play = false;
 
 int[] knobs = new int[100]; //change length later
-Knob a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
+Knob a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q//, r, s, t, u, v, w, x, y, z
+;
 
 Knob[] guiKnobs = {
-  a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
+  a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q//, r, s, t, u, v, w, x, y, z
 };
 String[] knobNames = {
   "OSCA Freq", "OSCB Freq", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Tempo"
@@ -93,24 +89,24 @@ void setup() {
   cp5 = new ControlP5(this);
   setScale(0, 0);
   // create a sine wave Oscil, set to 440 Hz, at 0.5 amplitude
-  sinwave = new Oscil( 0, 1.8f, Waves.SINE );  
-  triwave = new Oscil( 0, 2f, Waves.TRIANGLE );
+  sinwave = new Oscil( 0, .8f, Waves.SINE );  
+  triwave = new Oscil( 0, 1f, Waves.TRIANGLE );
   moog    = new MoogFilter( 1200, 0.5 );
   midi    = new Midi2Hz( 50 );
   //ADSR(float maxAmp, float attTime, float decTime, float susLvl, float relTime) 
-  //adsr    = new ADSR( 0.1, 0.3, 0.2, 0.00, 0.01 );
+  adsr    = new ADSR( 0.1, 0.3, 0.2, 0.00, 0.01 );
   midi.patch(sinwave.frequency);
   midi.patch(triwave.frequency);
   //sinwave.patch(moog).patch( out );
   // patch the Oscil to the output
-  triwave.patch(out);
-  sinwave.patch(out);
+  triwave.patch(adsr);
+  sinwave.patch(adsr);
 
   //create knobs
-  for (int i = 0; i < guiKnobs.length-1; i++) {
-    guiKnobs[i] = cp5.addKnob(knobNames[i] +" "+ i+" ")
+  for (int i = 0; i < 16; i++) {
+    guiKnobs[i] = cp5.addKnob(knobNames[i] +" "+ (i+1)+" ")
       .setRange(0, 127)
-        .setPosition(80*(i % 13)+10, height-(90*(i/13+1)))
+        .setPosition(80*(i % 8)+10, height-(90*(i/8+1)))
           .setRadius(30)
             .setDragDirection(Knob.VERTICAL)
               .setDecimalPrecision(0)
@@ -142,7 +138,7 @@ void setup() {
 
   // create a ListBox for mode
   ListBox d1 = cp5.addListBox("Mode");
-  d1.setPosition(1050, 600);
+  d1.setPosition(1050, 580);
   customize(d1);
   d1.addItem("Ionian", 0);
   d1.addItem("Dorian", 1);
@@ -154,12 +150,12 @@ void setup() {
   d1.addItem("Chromatic", 7);
 
   Textlabel keyLabel = cp5.addTextlabel("Key Label")
-    .setPosition(1050, 531)
+    .setPosition(1050, 516)
       .setSize(15, 100)
         .setText("CHOOSE A KEY");
-        
+
   RadioButton r1 = cp5.addRadioButton("Key")
-    .setPosition(1050, 545)
+    .setPosition(1050, 529)
       .setSize(10, 15)
         .setItemsPerRow(7)
           .setSpacingColumn(20)
@@ -195,10 +191,7 @@ void customize(ListBox ddl) {
 void keyPressed()
 {
   //the way this is written means what any key not listed plays the last note but i guess that's not a huge problem
-  int oct = 1;
-  float note;
   if ( key == 'a' ) {
-<<<<<<< HEAD
     midi.setMidiNoteIn( 50 );
     if (record) noteBank[beat] = (50);
   }
@@ -241,69 +234,18 @@ void keyPressed()
   if ( key == '\'') {
     midi.setMidiNoteIn( 67 );
     if (record) noteBank[beat] = (67);
-=======
-    note = (float)(oct*scale[0]);
-    midi.setMidiNoteIn( note );
-    if (record) notesPlayed.add( note );
   }
-  if ( key == 's' ) {
-    note = (float)(oct*scale[1]);
-    midi.setMidiNoteIn( note );
-    if (record) notesPlayed.add( note );
-  }
-  if ( key == 'd' ) {
-    note = (float)(oct*scale[2]);
-    midi.setMidiNoteIn( note );
-    if (record) notesPlayed.add( note );
-  }
-  if ( key == 'f' ) {
-    note = (float)(oct*scale[3]);
-    midi.setMidiNoteIn( note );
-    if (record) notesPlayed.add( note );
-  }
-  if ( key == 'g' ) {
-    note = (float)(oct*scale[4]);
-    midi.setMidiNoteIn( note );
-    if (record) notesPlayed.add( note );
-  }
-  if ( key == 'h' ) {
-    note = (float)(oct*scale[5]);
-    midi.setMidiNoteIn( note );
-    if (record) notesPlayed.add( note );
-  }
-  if ( key == 'j' ) {
-    note = (float)(oct*scale[6]);
-    midi.setMidiNoteIn( note );
-    if (record) notesPlayed.add( note );
-  }
-  if ( key == 'k' ) {
-    note = (float)(2*oct*scale[0]);
-    midi.setMidiNoteIn( note );
-    if (record) notesPlayed.add( note );
-  }
-  if ( key == 'l' ) {
-    note = (float)(2*oct*scale[1]);
-    midi.setMidiNoteIn( note );
-    if (record) notesPlayed.add( note );
-  }
-  if ( key == ';' ) {
-    note = (float)(2*oct*scale[2]);
-    midi.setMidiNoteIn( note );
-    if (record) notesPlayed.add( note );
-  }
-  if ( key == '\'') {
-    note = (float)(2*oct*scale[3]);
-    midi.setMidiNoteIn( note );
-    if (record) notesPlayed.add( note );
->>>>>>> ef160c3dbf26bff84eeda8a731bfa8bc33efa16e
+  if ( key == 'm') {
+    println("Knobs: " + Arrays.toString(knobs));
+    println("SinFreq: " + chromFreqs[knobs[0]/6] + 1);
   }
   if ( key == '1' ) moog.type = MoogFilter.Type.LP;
   if ( key == '2' ) moog.type = MoogFilter.Type.HP;
   if ( key == '3' ) moog.type = MoogFilter.Type.BP;
   //noteBank[beat] = (midi.getLastValues()[0]);
   println(Arrays.toString(noteBank));
-  //adsr.noteOn();
-  //adsr.patch( out );
+  adsr.noteOn();
+  adsr.patch( out );
 }
 
 void setScale(int mode, int keyOf) {
@@ -327,11 +269,8 @@ void setScale(int mode, int keyOf) {
   int scaleCount = 0;
   for (int s : steps) {
     keyCount += steps[s];
-    if (keyCount >= chromFreqs.length){
-      scale[scaleCount] = chromFreqs[keyCount];
-    } else {
-      scale[scaleCount] = chromFreqs[keyCount] / 2;
-    }
+    keyCount = keyCount % keys.length;
+    scale[scaleCount] = keys[keyCount];
     scaleCount++;
   }
 }
@@ -340,12 +279,12 @@ void draw() {
   for (int i = 0; i < guiKnobs.length; i++) {
     knobs[i] = (int)guiKnobs[i].getValue();
   }
-  sinwave.setFrequency((float)knobs[16]*2 + 70);
-  triwave.setFrequency((float)(knobs[17] + 80)/2);
-  //sinwave.setFrequency(chromFreqs[knobs[0]/6] + 1);
-  //triwave.setFrequency((chromFreqs[knobs[1]/6] + 1)/2);
-  //sinwave.setAmplitude((float)knobs[8]/63 + 0.01);
-  //triwave.setAmplitude((float)knobs[9]/63 + 0.01);
+  //sinwave.setFrequency((float)knobs[0]*2 + 70);
+  //  triwave.setFrequency((float)(knobs[1] + 80)/2);
+  sinwave.setFrequency(chromFreqs[knobs[0]/6] + 1);
+  triwave.setFrequency((chromFreqs[knobs[1]/6] + 1)/2);
+  sinwave.setAmplitude((float)knobs[8]/63 + 0.01);
+  triwave.setAmplitude((float)knobs[9]/63 + 0.01);
 
   moog.frequency.setLastValue((float)knobs[2]*20 );
   moog.resonance.setLastValue((float)knobs[10]/127  );
@@ -372,8 +311,8 @@ void record(boolean flag) {
 }
 
 void clear() {
-for (int i = 0 ; i < noteBank.length; i++)
-  noteBank[i] = 0;
+  for (int i = 0 ; i < noteBank.length; i++)
+    noteBank[i] = 0;
 }
 
 /*void play(){
@@ -423,8 +362,8 @@ void controlEvent(ControlEvent theEvent) {
 void controllerChange(int channel, int number, int value) {
   println("CC: " + number + " @ " + value);
   knobs[number-16] = value;
-  if (number >= 15 && number <= 32)
-    guiKnobs[number-16].setValue(value);
+  //if (number >= 15 && number <= 32)
+  guiKnobs[number-16].setValue(value);
 }
 
 void stop()

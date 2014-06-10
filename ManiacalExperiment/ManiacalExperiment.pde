@@ -92,7 +92,7 @@ void setup() {
   wave  = new Oscil( 220, 0.5f, table );
   // patch the Oscil to the output
   wave.patch( out );
-
+  
   //create knobs
   for (int i = 0; i < 16; i++) {
     guiKnobs[i] = cp5.addKnob(knobNames[i] +" "+ (i+1)+" ")
@@ -126,6 +126,9 @@ void setup() {
   Bang stopPlay = cp5.addBang("stop")
     .setPosition(1215, 717)
       .setSize(40, 20);
+      
+  stroke(255);
+  rect(100,100,100,100);
 
   // create a ListBox for mode
   ListBox d1 = cp5.addListBox("Mode");
@@ -268,7 +271,7 @@ void draw() {
     knobs[i] = (int)guiKnobs[i].getValue();
   }
 
-  wave.setFrequency(knobs[0]*5);
+  wave.setFrequency((float)knobs[0]/3);
   background(0);
   stroke(255);
   for ( int i = 0; i < out.bufferSize() - 1; i+=10 )
