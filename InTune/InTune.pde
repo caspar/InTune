@@ -18,10 +18,10 @@ Oscil sqrwave;
 MoogFilter moog;
 Midi2Hz midi;
 ADSR  adsr;
+
 //i feel kind of bad for using an arraylist but i don't have time for this
-//ArrayList<Float> notesPlayed = new ArrayList<Float>();
-//only needed to be float when i was trying not to do things the sucky way
-ArrayList<Integer> notesPlayed = new ArrayList<Integer>();
+ArrayList<Float> notesPlayed = new ArrayList<Float>();
+
 boolean record = false;
 boolean play = false;
 
@@ -194,49 +194,62 @@ void customize(ListBox ddl) {
 void keyPressed()
 {
   //the way this is written means what any key not listed plays the last note but i guess that's not a huge problem
+  int oct = 1;
+  float note;
   if ( key == 'a' ) {
-    midi.setMidiNoteIn( 50 );
-    if (record) notesPlayed.add(50);
+    note = (float)(oct*scale[0]);
+    midi.setMidiNoteIn( note );
+    if (record) notesPlayed.add( note );
   }
   if ( key == 's' ) {
-    midi.setMidiNoteIn( 52 );
-    if (record) notesPlayed.add(52);
+    note = (float)(oct*scale[1]);
+    midi.setMidiNoteIn( note );
+    if (record) notesPlayed.add( note );
   }
   if ( key == 'd' ) {
-    midi.setMidiNoteIn( 54 );
-    if (record) notesPlayed.add(54);
+    note = (float)(oct*scale[2]);
+    midi.setMidiNoteIn( note );
+    if (record) notesPlayed.add( note );
   }
   if ( key == 'f' ) {
-    midi.setMidiNoteIn( 55 );
-    if (record) notesPlayed.add(55);
+    note = (float)(oct*scale[3]);
+    midi.setMidiNoteIn( note );
+    if (record) notesPlayed.add( note );
   }
   if ( key == 'g' ) {
-    midi.setMidiNoteIn( 57 );
-    if (record) notesPlayed.add(57);
+    note = (float)(oct*scale[4]);
+    midi.setMidiNoteIn( note );
+    if (record) notesPlayed.add( note );
   }
   if ( key == 'h' ) {
-    midi.setMidiNoteIn( 59 );
-    if (record) notesPlayed.add(59);
+    note = (float)(oct*scale[5]);
+    midi.setMidiNoteIn( note );
+    if (record) notesPlayed.add( note );
   }
   if ( key == 'j' ) {
-    midi.setMidiNoteIn( 61 );
-    if (record) notesPlayed.add(61);
+    note = (float)(oct*scale[6]);
+    midi.setMidiNoteIn( note );
+    if (record) notesPlayed.add( note );
   }
   if ( key == 'k' ) {
-    midi.setMidiNoteIn( 62 );
-    if (record) notesPlayed.add(50);
+    note = (float)(2*oct*scale[0]);
+    midi.setMidiNoteIn( note );
+    if (record) notesPlayed.add( note );
   }
   if ( key == 'l' ) {
-    midi.setMidiNoteIn( 64 );
-    if (record) notesPlayed.add(64);
+    note = (float)(2*oct*scale[1]);
+    midi.setMidiNoteIn( note );
+    if (record) notesPlayed.add( note );
   }
   if ( key == ';' ) {
-    midi.setMidiNoteIn( 66 );
-    if (record) notesPlayed.add(66);
+    note = (float)(2*oct*scale[2]);
+    midi.setMidiNoteIn( note );
+    if (record) notesPlayed.add( note );
   }
   if ( key == '\'') {
-    midi.setMidiNoteIn( 67 );
-    if (record) notesPlayed.add(67);
+    note = (float)(2*oct*scale[3]);
+    midi.setMidiNoteIn( note );
+    if (record) notesPlayed.add( note );
   }
   if ( key == '1' ) moog.type = MoogFilter.Type.LP;
   if ( key == '2' ) moog.type = MoogFilter.Type.HP;
@@ -268,8 +281,11 @@ void setScale(int mode, int keyOf) {
   int scaleCount = 0;
   for (int s : steps) {
     keyCount += steps[s];
-    keyCount = keyCount % keys.length;
-    scale[scaleCount] = keys[keyCount];
+    if (keyCount >= chromFreqs.length){
+      scale[scaleCount] = chromFreqs[keyCount];
+    } else {
+      scale[scaleCount] = chromFreqs[keyCount] / 2;
+    }
     scaleCount++;
   }
 }
